@@ -4,8 +4,8 @@
 (setq-default indent-tabs-mode nil)
 
 (let ((default-directory "~/.emacs.d/site-lisp/"))
-      (normal-top-level-add-to-load-path '("."))
-      (normal-top-level-add-subdirs-to-load-path))
+  (normal-top-level-add-to-load-path '("."))
+  (normal-top-level-add-subdirs-to-load-path))
 
 ;;; Mac specific
 (when (eq system-type 'darwin)
