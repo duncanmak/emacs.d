@@ -47,10 +47,6 @@
 ;; (require 'browse-kill-ring)
 ;; (browse-kill-ring-default-keybindings)
 
-;;; pivotal tracker
-(add-to-list 'load-path "pivotal-tracker")
-(require 'pivotal-tracker)
-
 ;; Make control+pageup/down scroll the other buffer
 (global-set-key [C-next]  'scroll-other-window)
 (global-set-key [C-prior] 'scroll-other-window-down)
