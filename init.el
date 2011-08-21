@@ -1,8 +1,5 @@
 (server-start)
-(display-time)
-(column-number-mode)
 (load-theme 'tango-dark)
-(set-default-font "Monospace-10")
 (desktop-save-mode 1)
 (setq-default indent-tabs-mode nil)
 
@@ -18,7 +15,10 @@
   (setq mac-option-modifier nil)
   (set-default-font "Menlo-14"))
 
-(setenv "PATH" (concat (getenv "PATH") ":/home/duncan/bin"))
+;;; Linux specific
+(when (eq system-type 'gnu-linux)
+  (setenv "PATH" (concat (getenv "PATH") ":/home/duncan/bin"))
+  (set-default-font "Monospace-10"))
 
 (require 'recentf)
 (recentf-mode 1)
@@ -191,8 +191,11 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(blink-cursor-mode nil)
  '(browse-kill-ring-quit-action (quote save-and-restore))
+ '(column-number-mode t)
  '(confirm-kill-emacs (quote y-or-n-p))
+ '(display-time-mode t)
  '(ibuffer-display-summary nil)
  '(inhibit-startup-screen t)
  '(pivotal-api-token "a6b179a9a3f1615a42752fd18d96fbb6")
