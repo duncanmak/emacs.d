@@ -1,0 +1,191 @@
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdfetex 2011.8.19)  19 AUG 2011 17:08
+entering extended mode
+ file:line:error style messages enabled.
+ %&-line parsing enabled.
+**\nonstopmode \catcode126=12 \def\normaltilde{~}\catcode126=13 \let~\normaltil
+de  \input ./rdebug-emacs.texi
+(./rdebug-emacs.texi (./texinfo.tex Loading texinfo [version 2005-07-05.19]:
+Basics,
+\bindingoffset=\dimen16
+\normaloffset=\dimen17
+\pagewidth=\dimen18
+\pageheight=\dimen19
+\outerhsize=\dimen20
+\outervsize=\dimen21
+\cornerlong=\dimen22
+\cornerthick=\dimen23
+\topandbottommargin=\dimen24
+\headlinebox=\box16
+\footlinebox=\box17
+\margin=\insert252
+\EMsimple=\toks13
+\groupbox=\box18
+\groupinvalidhelp=\toks14
+\mil=\dimen25
+\exdentamount=\skip18
+\inmarginspacing=\skip19
+ pdf,
+\tempnum=\count27
+\lnkcount=\count28
+\filename=\toks15
+\filenamelength=\count29
+\pgn=\count30
+\toksA=\toks16
+\toksB=\toks17
+\toksC=\toks18
+\toksD=\toks19
+\boxA=\box19
+\countA=\count31
+ (/usr/share/texmf-texlive/tex/plain/misc/pdfcolor.tex) fonts,
+\sffam=\fam8
+\textleading=\dimen26
+\fontdepth=\count32
+
+page headings,
+\titlepagetopglue=\skip20
+\titlepagebottomglue=\skip21
+\evenheadline=\toks20
+\oddheadline=\toks21
+\evenfootline=\toks22
+\oddfootline=\toks23
+ tables,
+\tableindent=\dimen27
+\itemindent=\dimen28
+\itemmargin=\dimen29
+\itemmax=\dimen30
+\itemno=\count33
+\multitableparskip=\skip22
+\multitableparindent=\skip23
+\multitablecolspace=\dimen31
+\multitablelinespace=\skip24
+\colcount=\count34
+\everytab=\toks24
+ conditionals,
+\doignorecount=\count35
+ indexing,
+\secondaryindent=\skip25
+\partialpage=\box20
+\doublecolumnhsize=\dimen32
+ sectioning,
+\unnumberedno=\count36
+\chapno=\count37
+\secno=\count38
+\subsecno=\count39
+\subsubsecno=\count40
+\appendixno=\count41
+\absseclevel=\count42
+\secbase=\count43
+\chapheadingskip=\skip26
+\secheadingskip=\skip27
+\subsecheadingskip=\skip28
+ toc,
+\tocfile=\write0
+\contentsrightmargin=\skip29
+\savepageno=\count44
+\lastnegativepageno=\count45
+\tocindent=\dimen33
+ environments,
+\errorbox=\box21
+\lispnarrowing=\skip30
+\envskipamount=\skip31
+\circthick=\dimen34
+\cartouter=\dimen35
+\cartinner=\dimen36
+\normbskip=\skip32
+\normpskip=\skip33
+\normlskip=\skip34
+\lskip=\skip35
+\rskip=\skip36
+\tabw=\dimen37
+
+defuns,
+\defbodyindent=\skip37
+\defargsindent=\skip38
+\deflastargmargin=\skip39
+\parencount=\count46
+\brackcount=\count47
+ macros,
+\paramno=\count48
+\macname=\toks25
+ cross references,
+\auxfile=\write1
+\savesfregister=\count49
+ insertions,
+\footnoteno=\count50
+\SAVEfootins=\box22
+\SAVEmargin=\box23
+
+(/usr/share/texmf-texlive/tex/generic/epsf/epsf.tex
+This is `epsf.tex' v2.7.3 <23 July 2005>
+\epsffilein=\read1
+\epsfframemargin=\dimen38
+\epsfframethickness=\dimen39
+\epsfrsize=\dimen40
+\epsftmp=\dimen41
+\epsftsize=\dimen42
+\epsfxsize=\dimen43
+\epsfysize=\dimen44
+\pspoints=\dimen45
+)
+\noepsfhelp=\toks26
+ localization,
+\nolanghelp=\toks27
+\defaultparindent=\dimen46
+ and turning on texinfo input format.) (./rdebug-emacs.aux)
+\openout1 = `rdebug-emacs.aux'.
+
+@cpindfile=@write2
+@fnindfile=@write3
+@vrindfile=@write4
+@tpindfile=@write5
+@kyindfile=@write6
+@pgindfile=@write7
+
+(./version-rdebug-emacs.texi) [1
+\openout2 = `rdebug-emacs.cp'.
+
+\openout3 = `rdebug-emacs.fn'.
+
+\openout4 = `rdebug-emacs.vr'.
+
+\openout5 = `rdebug-emacs.tp'.
+
+\openout6 = `rdebug-emacs.ky'.
+
+\openout7 = `rdebug-emacs.pg'.
+
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2] (Debugging with ruby-d
+ebug under GNU Emacs)
+\openout0 = `rdebug-emacs.toc'.
+
+ Chapter 1 [1] Chapter 2
+[2] [3] [4] [5] Chapter 3 [6] [7] [8] [9] [10] Chapter 4 [11] [12] [13]
+(Emacs Command Index) [14] (./rdebug-emacs.pgs) (Emacs Function Index) [15]
+(./rdebug-emacs.fns) (Key Binding Index) [16] [17] [18] ) 
+Here is how much of TeX's memory you used:
+ 1752 strings out of 497129
+ 20040 string characters out of 1207599
+ 51652 words of memory out of 3000000
+ 2876 multiletter control sequences out of 15000+50000
+ 32127 words of font info for 112 fonts, out of 3000000 for 9000
+ 51 hyphenation exceptions out of 8191
+ 13i,5n,17p,334b,433s stack positions out of 5000i,500n,10000p,200000b,50000s
+</usr/share/texmf-texl
+ive/fonts/type1/public/amsfonts/cm/cmb10.pfb></usr/share/texmf-texlive/fonts/ty
+pe1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-texlive/fonts/type1/public/
+amsfonts/cm/cmcsc10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/c
+m/cmr10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr7.pfb><
+/usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/share/te
+xmf-texlive/fonts/type1/public/amsfonts/cm/cmsl10.pfb></usr/share/texmf-texlive
+/fonts/type1/public/amsfonts/cm/cmsltt10.pfb></usr/share/texmf-texlive/fonts/ty
+pe1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-texlive/fonts/type1/public/
+amsfonts/cm/cmti10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm
+/cmti9.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
+</usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/share
+/texmf-texlive/fonts/type1/public/amsfonts/cm/cmtt9.pfb>
+Output written on rdebug-emacs.pdf (20 pages, 234486 bytes).
+PDF statistics:
+ 233 PDF objects out of 1000 (max. 8388607)
+ 38 named destinations out of 1000 (max. 500000)
+ 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+

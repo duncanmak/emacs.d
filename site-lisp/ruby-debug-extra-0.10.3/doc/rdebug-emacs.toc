@@ -1,0 +1,33 @@
+@unnchapentry{Debugging with ruby-debug under GNU Emacs}{10001}{Top}{1}
+@numchapentry{Getting started}{1}{Getting started}{2}
+@numsecentry{Installation}{1.1}{Installation}{2}
+@numsecentry{Emacs rdebug}{1.2}{Emacs rdebug}{2}
+@numsecentry{Entering rdebug from an existing shell buffer}{1.3}{Emacs shell tracking mode}{2}
+@numsecentry{Configurating this package}{1.4}{Configurating this package}{2}
+@numchapentry{Multi-window}{2}{The Multi-window Mode}{3}
+@numsecentry{Activating Multi-window mode}{2.1}{}{3}
+@numsecentry{Window Layouts}{2.2}{}{3}
+@numsecentry{The buffers}{2.3}{}{3}
+@numsubsecentry{Keybindings for all Debugger Windows}{2.3.1}{}{4}
+@numsubsecentry{Keybindings for Secondary Buffers}{2.3.2}{}{4}
+@numsubsecentry{The Debugger Shell Buffer}{2.3.3}{}{5}
+@numsubsecentry{The Source Buffer}{2.3.4}{}{5}
+@numsubsecentry{The Output Buffer}{2.3.5}{}{5}
+@numsubsecentry{The Variables Buffer}{2.3.6}{}{5}
+@numsubsecentry{The Stack Trace Buffer}{2.3.7}{}{5}
+@numsubsecentry{The Watch Buffer}{2.3.8}{}{6}
+@numsubsecentry{The Breakpoints Buffer}{2.3.9}{}{6}
+@numsubsecentry{The Help Buffer}{2.3.10}{}{6}
+@numchapentry{Debugger Buffers}{3}{Debugger Buffers}{7}
+@numsecentry{Emacs Debugger Command buffer}{3.1}{Debugger Command Buffer}{7}
+@numsecentry{Commands from the source script}{3.2}{Emacs Source}{10}
+@numchapentry{Emacs Debugger Commands}{4}{Emacs Debugger Commands}{12}
+@numsecentry{Emacs Debugger Common Commands}{4.1}{Emacs Debugger Common Commands}{12}
+@numsecentry{Emacs Debugger Breakpoint Buffer Commands}{4.2}{Emacs Debugger Breakpoint Buffer Commands}{13}
+@numsecentry{Emacs Debugger Stack Buffer Commands}{4.3}{Emacs Debugger Stack Buffer Commands}{13}
+@numsecentry{Emacs Debugger Variable Buffer Commands}{4.4}{Emacs Debugger Variable Buffer Commands}{13}
+@numsecentry{Emacs Debugger Watch Buffer Commands}{4.5}{Emacs Debugger Watch Buffer Commands}{13}
+@numsecentry{Emacs Debugger GUD Commands}{4.6}{Emacs GUD Commands}{14}
+@unnchapentry{Emacs Command Index}{10002}{Emacs Command Index}{15}
+@unnchapentry{Emacs Function Index}{10003}{Emacs Function Index}{16}
+@unnchapentry{Key Binding Index}{10004}{Emacs Key Binding Index}{17}

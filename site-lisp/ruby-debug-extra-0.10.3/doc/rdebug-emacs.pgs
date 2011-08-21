@@ -1,0 +1,10 @@
+\entry {\code {C-c f (gud-finish \var {arg})}}{9}
+\entry {\code {C-c n (comint-delete-output)}}{8}
+\entry {\code {C-c n (gud-next)}}{7, 9}
+\entry {\code {C-c RET (comint-copy-old-input)}}{7}
+\entry {\code {C-c SPC (gud-step \var {arg})}}{8}
+\entry {\code {C-x C-a C-b (gud-break)}}{7}
+\entry {\code {C-x C-a C-d (gud-refresh)}}{7}
+\entry {\code {C-x C-a C-d (gud-remove)}}{7}
+\entry {\code {C-x C-a C-f (gud-finish)}}{9}
+\entry {\code {C-x C-a C-s (gud-step \var {arg})}}{8}
