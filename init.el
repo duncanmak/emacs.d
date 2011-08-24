@@ -9,6 +9,8 @@
 
 ;;; Mac specific
 (when (eq system-type 'darwin)
+  (require 'ls-lisp)
+  (setq ls-lisp-use-insert-directory-program nil)
   (setq mac-command-key-is-meta t)
   (setq mac-command-modifier 'meta)
   (setq mac-option-key-is-meta nil)
