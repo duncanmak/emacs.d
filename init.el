@@ -9,16 +9,16 @@
 
 ;;; Mac specific
 (when (eq system-type 'darwin)
-  (setq mac-option-key-is-meta nil)
   (setq mac-command-key-is-meta t)
   (setq mac-command-modifier 'meta)
+  (setq mac-option-key-is-meta nil)
   (setq mac-option-modifier nil)
   (set-default-font "Menlo-14"))
 
 ;;; Linux specific
-(when (eq system-type 'gnu-linux)
+(when (eq system-type 'gnu/linux)
   (setenv "PATH" (concat (getenv "PATH") ":/home/duncan/bin"))
-  (set-default-font "Monospace-10"))
+  (set-default-font "Monospace-7"))
 
 (require 'recentf)
 (recentf-mode 1)
@@ -194,11 +194,13 @@
  '(blink-cursor-mode nil)
  '(browse-kill-ring-quit-action (quote save-and-restore))
  '(column-number-mode t)
+ '(comint-process-echoes t)
  '(confirm-kill-emacs (quote y-or-n-p))
  '(display-time-mode t)
  '(ibuffer-display-summary nil)
  '(inhibit-startup-screen t)
  '(pivotal-api-token "a6b179a9a3f1615a42752fd18d96fbb6")
+ '(ruby-deep-indent-paren nil)
  '(show-paren-mode t)
  '(tool-bar-mode nil))
 
