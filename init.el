@@ -20,7 +20,8 @@
 ;;; Linux specific
 (when (eq system-type 'gnu/linux)
   (setenv "PATH" (concat (getenv "PATH") ":/home/duncan/bin"))
-  (set-default-font "Monospace-7"))
+  (setq ack-executable "ack-grep")
+  (set-default-font "Monospace-8"))
 
 (require 'recentf)
 (recentf-mode 1)
@@ -55,7 +56,7 @@
 
 ;;; browser-kill-ring
 ;; (require 'browse-kill-ring)
-;; (browse-kill-ring-default-keybindings)
+(browse-kill-ring-default-keybindings)
 
 ;; Make control+pageup/down scroll the other buffer
 (global-set-key [C-next]  'scroll-other-window)
@@ -155,7 +156,6 @@
 (add-to-list 'auto-mode-alist '("\\.coffee$" . coffee-mode))
 (add-to-list 'auto-mode-alist '("Cakefile" . coffee-mode))
 
-
 ;;; Ruby
 (add-to-list 'load-path "rinari")
 (require 'rinari)
@@ -184,6 +184,7 @@
 (require 'ensime)
 
 (defun scala-hook ()
+  (imenu-add-menubar-index)
   (subword-mode +1)
   (ensime-scala-mode-hook)
   (scala-electric-mode +1))
