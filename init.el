@@ -54,10 +54,6 @@
               " "
               filename-and-process)))
 
-;;; browser-kill-ring
-;; (require 'browse-kill-ring)
-(browse-kill-ring-default-keybindings)
-
 ;; Make control+pageup/down scroll the other buffer
 (global-set-key [C-next]  'scroll-other-window)
 (global-set-key [C-prior] 'scroll-other-window-down)
