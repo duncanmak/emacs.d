@@ -158,20 +158,15 @@
 (add-to-list 'auto-mode-alist '("Cakefile" . coffee-mode))
 
 ;;; Ruby
-(add-to-list 'load-path "rinari")
-(require 'rinari)
-
-(add-to-list 'load-path "rvm")
-(require 'rvm)
-
-(add-to-list 'load-path "ruby-debug-extra/emacs")
-(require 'rdebug)
-
 (defun ruby-hook ()
-  (rvm-activate-corresponding-ruby)
+  (add-to-list 'load-path "rinari")
+  (require 'rinari)
+  (add-to-list 'load-path "rvm")
+  (require 'rvm)
+  (add-to-list 'load-path "ruby-debug-extra/emacs")
+  (require 'rdebug)
+
   (rinari-launch)
-  (autoload 'inf-ruby "inf-ruby" "Run an inferior Ruby process" t)
-  (autoload 'inf-ruby-keys "inf-ruby" "" t)
   (imenu-add-menubar-index)
   (inf-ruby-keys)
   (subword-mode +1)
