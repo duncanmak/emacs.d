@@ -165,12 +165,16 @@
   (require 'rvm)
   (add-to-list 'load-path "ruby-debug-extra/emacs")
   (require 'rdebug)
-
   (rinari-launch)
   (imenu-add-menubar-index)
   (inf-ruby-keys)
   (subword-mode +1)
-  (ruby-electric-mode))
+  (ruby-electric-mode)
+  (ad-activate 'run-ruby))
+
+(defadvice run-ruby (after rvm-run-ruby-advice)
+  "Activate RVM when run-ruby"
+  (rvm-activate-corresponding-ruby))
 
 (eval-after-load 'ruby-mode '(add-hook 'ruby-mode-hook 'ruby-hook))
 
