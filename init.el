@@ -137,7 +137,8 @@
 (define-key dired-mode-map (kbd "ESC C-s") 'dired-isearch-forward-regexp)
 (define-key dired-mode-map (kbd "ESC C-r") 'dired-isearch-backward-regexp)
 
-(add-hook 'dired-load-hook (function (lambda () (load "dired-x"))))
+(add-hook 'dired-load-hook (function (lambda () (setq dired-x-hands-off-my-keys nil) (load "dired-x"))))
+(define-key global-map (kbd "C-x C-j") 'dired-jump)
 
 (defun c-hook ()
   (subword-mode +1)
