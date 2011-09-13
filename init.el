@@ -177,6 +177,9 @@
   (rvm-activate-corresponding-ruby))
 
 (eval-after-load 'ruby-mode '(add-hook 'ruby-mode-hook 'ruby-hook))
+(add-to-list 'auto-mode-alist '("Rakefile" . ruby-mode))
+(add-to-list 'auto-mode-alist '("\\.rake$" . ruby-mode))
+(add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
 
 ;;; Scala
 (add-to-list 'load-path "ensime/elisp/")
