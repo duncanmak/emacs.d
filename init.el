@@ -142,8 +142,8 @@
 
 (defun c-hook ()
   (subword-mode +1)
-  (require 'autopair)
-  (autopair-mode +1))
+  (electric-pair-mode +1)
+  (electric-indent-mode +1))
 
 (add-hook 'java-mode-hook 'c-hook)
 
@@ -209,6 +209,7 @@
  '(js2-mirror-mode t)
  '(pivotal-api-token "a6b179a9a3f1615a42752fd18d96fbb6")
  '(ruby-deep-indent-paren nil)
+ '(scroll-conservatively 101)
  '(show-paren-mode t)
  '(tool-bar-mode nil))
 
