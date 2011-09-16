@@ -104,6 +104,7 @@
 (add-hook 'clojure-mode-hook          'lisp-hook)
 (add-hook 'emacs-lisp-mode-hook       'lisp-hook)
 (add-hook 'lisp-interaction-mode-hook 'lisp-hook)
+(add-hook 'scheme-mode-hook           'lisp-hook)
 (add-hook 'lisp-mode-hook             'lisp-hook)
 
 ;;; dired
@@ -141,6 +142,7 @@
 (define-key global-map (kbd "C-x C-j") 'dired-jump)
 
 (defun c-hook ()
+  (imenu-add-menubar-index)
   (subword-mode +1)
   (electric-pair-mode +1)
   (electric-indent-mode +1))
