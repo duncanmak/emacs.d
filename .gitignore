@@ -4,3 +4,5 @@ ac-comphist.dat
 auto-save-list/*
 session.*
 url/*
+elpa/archive-contents
+elpa/archives/*/archive-contents
