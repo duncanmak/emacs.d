@@ -6,3 +6,4 @@ session.*
 url/*
 elpa/archive-contents
 elpa/archives/*/archive-contents
+semanticdb/*
