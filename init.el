@@ -147,6 +147,7 @@
   (electric-pair-mode +1)
   (electric-indent-mode +1))
 
+;;; java
 (add-hook 'java-mode-hook 'c-hook)
 
 ;;; javascript
@@ -171,6 +172,8 @@
   (imenu-add-menubar-index)
   (inf-ruby-keys)
   (subword-mode +1)
+  (electric-pair-mode -1)
+  (electric-indent-mode -1)
   (ruby-electric-mode)
   (ad-activate 'run-ruby))
 
@@ -193,6 +196,8 @@
   (imenu-add-menubar-index)
   (subword-mode +1)
   (ensime-scala-mode-hook)
+  (electric-pair-mode -1)
+  (electric-indent-mode -1)
   (scala-electric-mode +1))
 
 (add-hook 'scala-mode-hook 'scala-hook)
