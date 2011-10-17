@@ -193,7 +193,6 @@
 (require 'ensime)
 
 (defun scala-hook ()
-  (imenu-add-menubar-index)
   (subword-mode +1)
   (ensime-scala-mode-hook)
   (electric-pair-mode -1)
