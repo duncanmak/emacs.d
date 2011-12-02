@@ -16,6 +16,8 @@
   (setq mac-command-modifier 'meta)
   (setq mac-option-key-is-meta nil)
   (setq mac-option-modifier nil)
+  (setenv "PATH" (concat "/usr/local/bin:" (getenv "PATH")))
+  (push "/usr/local/bin" exec-path)
   (set-default-font "Menlo-14"))
 
 ;;; Linux specific
