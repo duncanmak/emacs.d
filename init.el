@@ -222,9 +222,7 @@
                       rcirc-default-user-full-name
                       channels))))
 (add-hook 'rcirc-mode-hook (lambda ()
-                             (rcirc-track-minor-mode 1)
-                             (flyspell-mode 1)))
-
+                             (rcirc-track-minor-mode 1)))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
