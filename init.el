@@ -156,6 +156,14 @@
 (autoload 'js2-mode "js2-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 
+;;; Python
+(add-hook 'python-mode-hook
+          (function (lambda ()
+                      (subword-mode +1)
+                      (setq indent-tabs-mode nil
+                            python-indent    2
+                            tab-width        2))))
+
 ;;; Ruby
 (defun ruby-hook ()
   (add-to-list 'load-path "rinari")
@@ -207,6 +215,7 @@
      (let* ((server (car (process-contact process)))
             (port (process-contact process :service))
             (nick (rcirc-nick process))
+            (password (read-passwd "IRC Password: "))
             channels query-buffers)
        (dolist (buf (buffer-list))
          (with-current-buffer buf
@@ -220,9 +229,9 @@
        (rcirc-connect server port nick
                       rcirc-default-user-name
                       rcirc-default-user-full-name
-                      channels))))
-(add-hook 'rcirc-mode-hook (lambda ()
-                             (rcirc-track-minor-mode 1)))
+                      channels password))))
+
+(add-hook 'rcirc-mode-hook (lambda () (rcirc-track-minor-mode 1)))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
