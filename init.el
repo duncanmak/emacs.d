@@ -157,12 +157,19 @@
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 
 ;;; Python
+
 (add-hook 'python-mode-hook
+          (lambda ()
+            (subword-mode +1)
+            (setq indent-tabs-mode t
+                  tab-width        2
+                  py-indent-offset 2
+                  python-indent    2)))
+
+;;; C#
+(add-hook 'csharp-mode-hook
           (function (lambda ()
-                      (subword-mode +1)
-                      (setq indent-tabs-mode nil
-                            python-indent    2
-                            tab-width        2))))
+                      (require 'flymake))))
 
 ;;; Ruby
 (defun ruby-hook ()
