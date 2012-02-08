@@ -19,7 +19,10 @@
   (setenv "PATH" (concat "/usr/local/bin:" (getenv "PATH")))
   (push "/usr/local/bin" exec-path)
   (global-set-key "\M-`" 'other-frame)
-  (set-default-font "Menlo-14"))
+  (set-default-font "Menlo-14")
+  (add-to-list 'default-frame-alist
+               '(font . "-apple-Menlo-medium-normal-normal-*-14-*-*-*-m-0-iso10646-1"))
+  )
 
 ;;; Linux specific
 (when (eq system-type 'gnu/linux)
