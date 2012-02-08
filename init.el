@@ -242,7 +242,11 @@
                       rcirc-default-user-full-name
                       channels password))))
 
-(add-hook 'rcirc-mode-hook (lambda () (rcirc-track-minor-mode 1)))
+(add-hook 'rcirc-mode-hook
+          (lambda ()
+            (rcirc-track-minor-mode 1)
+            (require 'arrange-buffers)
+            (define-key rcirc-mode-map (kbd "<f7>") '(lambda () (interactive) (arrange-buffers "^#" "rcirc-mode")))))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
