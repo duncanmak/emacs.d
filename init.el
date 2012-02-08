@@ -18,6 +18,7 @@
   (setq mac-option-modifier nil)
   (setenv "PATH" (concat "/usr/local/bin:" (getenv "PATH")))
   (push "/usr/local/bin" exec-path)
+  (global-set-key "\M-`" 'other-frame)
   (set-default-font "Menlo-14"))
 
 ;;; Linux specific
