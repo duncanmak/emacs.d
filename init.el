@@ -28,7 +28,7 @@
 (when (eq system-type 'gnu/linux)
   (setenv "PATH" (concat (getenv "PATH") ":/home/duncan/bin"))
   (setq ack-executable "ack-grep")
-  (set-default-font "Droid Sans Mono-10"))
+  (set-default-font "Droid Sans Mono-12"))
 
 (require 'recentf)
 (recentf-mode 1)
