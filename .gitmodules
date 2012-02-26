@@ -1,9 +1,6 @@
 [submodule "site-lisp/rinari"]
 	path = site-lisp/rinari
 	url = git://github.com/eschulte/rinari
-[submodule "site-lisp/rvm"]
-	path = site-lisp/rvm
-	url = git://github.com/senny/rvm.el
 [submodule "site-lisp/js2-mode"]
 	path = site-lisp/js2-mode
 	url = https://github.com/mooz/js2-mode.git

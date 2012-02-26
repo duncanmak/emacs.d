@@ -3,8 +3,8 @@
 ;;; Code:
 
 
-;;;### (autoloads nil nil ("wgrep-pkg.el" "wgrep.el") (20009 48721
-;;;;;;  485650))
+;;;### (autoloads nil nil ("wgrep-pkg.el" "wgrep.el") (20297 56447
+;;;;;;  926361))
 
 ;;;***
 

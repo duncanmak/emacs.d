@@ -1,40 +1,40 @@
 ;;; gist.el --- Emacs integration for gist.github.com
 
-;;; Author: Christian Neukirchen <purl.org/net/chneukirchen>
-;;; Maintainer: Chris Wanstrath <chris@ozmm.org>
-;;; Contributors:
-;;; Will Farrington <wcfarrington@gmail.com>
-;;; Michael Ivey
-;;; Phil Hagelberg
-;;; Dan McKinley
-;;; Version: 0.5
-;;; Created: 21 Jul 2008
-;;; Keywords: gist git github paste pastie pastebin
+;; Author: Christian Neukirchen <purl.org/net/chneukirchen>
+;; Maintainer: Chris Wanstrath <chris@ozmm.org>
+;; Contributors:
+;; Will Farrington <wcfarrington@gmail.com>
+;; Michael Ivey
+;; Phil Hagelberg
+;; Dan McKinley
+;; Version: 0.5.1
+;; Created: 21 Jul 2008
+;; Keywords: gist git github paste pastie pastebin
 
-;;; This file is NOT part of GNU Emacs.
+;; This file is NOT part of GNU Emacs.
 
-;;; This is free software; you can redistribute it and/or modify it under
-;;; the terms of the GNU General Public License as published by the Free
-;;; Software Foundation; either version 2, or (at your option) any later
-;;; version.
-;;;
-;;; This is distributed in the hope that it will be useful, but WITHOUT
-;;; ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-;;; FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-;;; for more details.
-;;;
-;;; You should have received a copy of the GNU General Public License
-;;; along with GNU Emacs; see the file COPYING.  If not, write to the
-;;; Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-;;; MA 02111-1307, USA.
+;; This is free software; you can redistribute it and/or modify it under
+;; the terms of the GNU General Public License as published by the Free
+;; Software Foundation; either version 2, or (at your option) any later
+;; version.
+;;
+;; This is distributed in the hope that it will be useful, but WITHOUT
+;; ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+;; FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+;; for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with GNU Emacs; see the file COPYING.  If not, write to the
+;; Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+;; MA 02111-1307, USA.
 
 ;;; Commentary:
-;;;  to function with https you may need to use curl
-;;;  by setting the option below
-;;; (setq gist-use-curl t)
+;;  to function with https you may need to use curl
+;;  by setting the option below
+;; (setq gist-use-curl t)
 
-;;; Uses your local GitHub config if it can find it.
-;;; See http://github.com/blog/180-local-github-config
+;; Uses your local GitHub config if it can find it.
+;; See http://github.com/blog/180-local-github-config
 
 ;;; Code:
 
@@ -133,7 +133,7 @@ accepts additional POST `params' as a list of (key . value) conses."
              (funcall callback))))
 
 ;;;###autoload
-(defun gist-region (begin end &optional private &optional callback)
+(defun gist-region (begin end &optional private callback)
   "Post the current region as a new paste at gist.github.com
 Copies the URL into the kill ring.
 
@@ -144,8 +144,11 @@ With a prefix argument, makes a private paste."
          (ext (or (cdr (assoc major-mode gist-supported-modes-alist))
                   (file-name-extension file)
                   "txt")))
+    (unless (string-match (concat "\\." ext) name)
+      (setq name (concat name "." ext)))
     (gist-request
-     "https://gist.github.com/gists"
+     (format "https://%s@gist.github.com/gists"
+             (or (car (github-auth-info)) ""))
      (or callback 'gist-created-callback)
      `(,@(if private '(("action_button" . "private")))
        ("file_ext[gistfile1]" . ,(concat "." ext))
@@ -244,7 +247,7 @@ With a prefix argument, makes a private paste."
   (interactive "P")
   (condition-case nil
       (gist-region (point) (mark) private)
-      (mark-inactive (gist-buffer private))))
+    (error (gist-buffer private))))
 
 ;;;###autoload
 (defun gist-region-or-buffer-private ()
@@ -253,9 +256,9 @@ Copies the URL into the kill ring."
   (interactive)
   (condition-case nil
       (gist-region-private (point) (mark))
-      (mark-inactive (gist-buffer-private))))
+    (error (gist-buffer-private))))
 
-(defvar gist-fetch-url "https://gist.github.com/%d.txt"
+(defvar gist-fetch-url "https://gist.github.com/raw/%d"
   "Raw Gist content URL format")
 
 ;;;###autoload
@@ -265,10 +268,10 @@ Copies the URL into the kill ring."
   (message "Retrieving list of your gists...")
   (github-with-auth-info login token
     (gist-request
-     (format "https://gist.github.com/api/v1/xml/gists/%s" login)
+     (format "https://%s@gist.github.com/api/v1/xml/gists/%s" login login)
      'gist-lists-retrieved-callback)))
 
-(defun gist-lists-retrieved-callback ()
+(defun gist-lists-retrieved-callback (&optional status)
   "Called when the list of gists has been retrieved. Parses the result
 and displays the list."
   (goto-char (point-min))
@@ -277,19 +280,18 @@ and displays the list."
                      (xml-parse-region (match-beginning 0) (point-max)))))
     (kill-buffer (current-buffer))
     (with-current-buffer (get-buffer-create "*gists*")
-      (toggle-read-only -1)
-      (goto-char (point-min))
-      (save-excursion
-        (kill-region (point-min) (point-max))
-        (gist-insert-list-header)
-        (mapc 'gist-insert-gist-link (xml-node-children (car gists)))
+      (let ((inhibit-read-only t))
+        (goto-char (point-min))
+        (save-excursion
+          (kill-region (point-min) (point-max))
+          (gist-insert-list-header)
+          (mapc 'gist-insert-gist-link (xml-node-children (car gists)))
 
-        ;; remove the extra newline at the end
-        (delete-backward-char 1))
+          ;; remove the extra newline at the end
+          (delete-char -1))
 
-      ;; skip header
-      (forward-line)
-      (toggle-read-only t)
+        ;; skip header
+        (forward-line))
       (set-window-buffer nil (current-buffer)))))
 
 (defun gist-insert-list-header ()
@@ -305,7 +307,7 @@ and displays the list."
   "Inserts a button that will open the given gist when pressed."
   (let* ((data (gist-parse-gist gist))
          (repo (string-to-number (car data))))
-    (mapc '(lambda (x) (insert (format "  %s    " x))) data)
+    (mapc (lambda (x) (insert (format "  %s    " x))) data)
     (make-text-button (line-beginning-position) (line-end-position)
                       'repo repo
                       'action 'gist-fetch-button

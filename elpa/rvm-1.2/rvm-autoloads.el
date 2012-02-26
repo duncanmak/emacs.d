@@ -4,7 +4,7 @@
 
 
 ;;;### (autoloads (rvm-open-gem rvm-use rvm-activate-corresponding-ruby
-;;;;;;  rvm-use-default) "rvm" "rvm.el" (19929 29950))
+;;;;;;  rvm-use-default) "rvm" "rvm.el" (20297 56448))
 ;;; Generated autoloads from rvm.el
 
 (autoload 'rvm-use-default "rvm" "\
@@ -14,7 +14,7 @@ use the rvm-default ruby as the current ruby version
 
 (autoload 'rvm-activate-corresponding-ruby "rvm" "\
 activate the corresponding ruby version for the file in the current buffer.
-This function searches for an .rvmrc file and actiavtes the configured ruby.
+This function searches for an .rvmrc file and activates the configured ruby.
 If no .rvmrc file is found, the default ruby is used insted.
 
 \(fn)" t nil)
@@ -25,13 +25,13 @@ switch the current ruby version to any ruby, which is installed with rvm
 \(fn NEW-RUBY NEW-GEMSET)" t nil)
 
 (autoload 'rvm-open-gem "rvm" "\
-Not documented
+
 
 \(fn GEMHOME)" t nil)
 
 ;;;***
 
-;;;### (autoloads nil nil ("rvm-pkg.el") (19929 29950 886592))
+;;;### (autoloads nil nil ("rvm-pkg.el") (20297 56448 822258))
 
 ;;;***
 
