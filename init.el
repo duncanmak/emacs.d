@@ -33,7 +33,7 @@
 ;;; Windows specific
 (when (eq system-type 'windows-nt)
   (push "C:\\Program Files (x86)\\Git\\bin" exec-path)
-  (set-default-font "Consolas-12"))
+  (set-face-attribute 'default nil :family "Consolas" :height 120))
 
 (require 'recentf)
 (recentf-mode 1)
