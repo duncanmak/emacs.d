@@ -30,6 +30,11 @@
   (setq ack-executable "ack-grep")
   (set-default-font "Droid Sans Mono-12"))
 
+;;; Windows specific
+(when (eq system-type 'windows-nt)
+  (push "C:\\Program Files (x86)\\Git\\bin" exec-path)
+  (set-default-font "Consolas-12"))
+
 (require 'recentf)
 (recentf-mode 1)
 (defun recentf-open-files-compl ()
