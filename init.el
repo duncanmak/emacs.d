@@ -33,6 +33,7 @@
   (push "C:\\Program Files (x86)\\Git\\bin" exec-path)
   (set-face-attribute 'default nil :family "Consolas" :height 120))
 
+;;; recentf
 (require 'recentf)
 (recentf-mode 1)
 (defun recentf-open-files-compl ()
@@ -44,6 +45,28 @@
       (find-file (cdr (assoc-string fname tocpl))))))
 (global-set-key "\C-x\C-r" 'recentf-open-files-compl)
 
+
+;;; iswitchb
+(add-to-list 'iswitchb-buffer-ignore "^ ")
+(add-to-list 'iswitchb-buffer-ignore "*Messages*")
+(add-to-list 'iswitchb-buffer-ignore "*ECB")
+(add-to-list 'iswitchb-buffer-ignore "*Buffer")
+(add-to-list 'iswitchb-buffer-ignore "*Completions")
+(add-to-list 'iswitchb-buffer-ignore "*ftp ")
+(add-to-list 'iswitchb-buffer-ignore "*bsh")
+(add-to-list 'iswitchb-buffer-ignore "*jde-log")
+(add-to-list 'iswitchb-buffer-ignore "^[tT][aA][gG][sS]$")
+(defun iswitchb-local-keys ()
+  (mapc (lambda (K) 
+          (let* ((key (car K)) (fun (cdr K)))
+            (define-key iswitchb-mode-map (edmacro-parse-keys key) fun)))
+        '(("<right>" . iswitchb-next-match)
+          ("<left>"  . iswitchb-prev-match)
+          ("<up>"    . ignore             )
+          ("<down>"  . ignore             ))))
+(add-hook 'iswitchb-define-mode-map-hook 'iswitchb-local-keys)
+
+;;; ibuffer
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 (autoload 'ibuffer "ibuffer" "List buffers." t)
 (add-hook 'ibuffer-hook
@@ -264,6 +287,8 @@
  '(display-time-mode t)
  '(ibuffer-display-summary nil)
  '(inhibit-startup-screen t)
+ '(iswitchb-mode t)
+ '(iswitchb-use-virtual-buffers t nil (recentf))
  '(js2-auto-indent-p t)
  '(js2-cleanup-whitespace t)
  '(js2-mirror-mode t)
