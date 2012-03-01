@@ -33,6 +33,12 @@
   (push "C:\\Program Files (x86)\\Git\\bin" exec-path)
   (set-face-attribute 'default nil :family "Consolas" :height 120))
 
+;;; windmove
+(global-set-key (kbd "C-c <left>")  'windmove-left)
+(global-set-key (kbd "C-c <right>") 'windmove-right)
+(global-set-key (kbd "C-c <up>")    'windmove-up)
+(global-set-key (kbd "C-c <down>")  'windmove-down)
+
 ;;; recentf
 (require 'recentf)
 (recentf-mode 1)
@@ -47,6 +53,7 @@
 
 
 ;;; iswitchb
+(require 'iswitchb)
 (add-to-list 'iswitchb-buffer-ignore "^ ")
 (add-to-list 'iswitchb-buffer-ignore "*Messages*")
 (add-to-list 'iswitchb-buffer-ignore "*ECB")
