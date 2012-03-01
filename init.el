@@ -63,6 +63,7 @@
 (add-to-list 'iswitchb-buffer-ignore "*bsh")
 (add-to-list 'iswitchb-buffer-ignore "*jde-log")
 (add-to-list 'iswitchb-buffer-ignore "^[tT][aA][gG][sS]$")
+(add-to-list 'iswitchb-buffer-ignore "@")
 (defun iswitchb-local-keys ()
   (mapc (lambda (K) 
           (let* ((key (car K)) (fun (cdr K)))
@@ -296,6 +297,7 @@
  '(inhibit-startup-screen t)
  '(iswitchb-mode t)
  '(iswitchb-use-virtual-buffers t nil (recentf))
+ '(iswitchb-max-to-show 10)
  '(js2-auto-indent-p t)
  '(js2-cleanup-whitespace t)
  '(js2-mirror-mode t)
@@ -310,7 +312,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(c-annotation-face ((t (:foreground "gray"))) t))
+ '(c-annotation-face ((t (:foreground "gray")))))
 
 (require 'package)
 ;; Add the original Emacs Lisp Package Archive
