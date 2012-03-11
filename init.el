@@ -132,13 +132,12 @@
 (eval-after-load "slime"
   '(progn
      ;; enable paredit in slime repl
-     (add-hook 'slime-mode-hook 'paredit-hook)
-     (add-hook 'slime-repl-mode-hook 'paredit-hook)
-
-     (defun override-slime-repl-bindings-with-paredit ()
-       (define-key slime-repl-mode-map
-	 (read-kbd-macro paredit-backward-delete-key) nil))
-     (add-hook 'slime-repl-mode-hook 'override-slime-repl-bindings-with-paredit)
+     ;; (add-hook 'slime-mode-hook 'paredit-hook)
+     ;; (add-hook 'slime-repl-mode-hook 'paredit-hook)
+     ;; (defun override-slime-repl-bindings-with-paredit ()
+     ;;   (define-key slime-repl-mode-map
+     ;;     (read-kbd-macro paredit-backward-delete-key) nil))
+     ;; (add-hook 'slime-repl-mode-hook 'override-slime-repl-bindings-with-paredit)
      ))
 
 (add-hook 'clojure-mode-hook          'lisp-hook)
