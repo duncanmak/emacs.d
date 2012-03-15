@@ -5,7 +5,7 @@
 ;; Keywords: grep edit extensions
 ;; URL: http://github.com/mhayashi1120/Emacs-wgrep/raw/master/wgrep.el
 ;; Emacs: GNU Emacs 22 or later
-;; Version: 1.0.2
+;; Version: 1.0.3
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -80,9 +80,6 @@
 ;; * Support removing whole line include new-line.
 
 ;;; Code:
-
-(eval-when-compile
-  (require 'cl))
 
 (require 'grep)
 
@@ -169,8 +166,6 @@
 
 (defconst wgrep-line-file-regexp (caar grep-regexp-alist))
 
-(add-hook 'grep-setup-hook 'wgrep-setup)
-
 (defvar wgrep-mode-map nil)
 (unless wgrep-mode-map
   (setq wgrep-mode-map
@@ -192,7 +187,9 @@
 
           map)))
 
+;;;###autoload
 (defun wgrep-setup ()
+  "Setup wgrep preparation."
   (define-key grep-mode-map wgrep-enable-key 'wgrep-change-to-wgrep-mode)
   ;; delete previous wgrep overlays
   (wgrep-cleanup-overlays (point-min) (point-max))
@@ -201,7 +198,7 @@
 
 (defun wgrep-maybe-echo-error-at-point ()
   (when (null (current-message))
-    (let ((o (find-if
+    (let ((o (wgrep-find-if
               (lambda (o)
                 (overlay-get o 'wgrep-reject-message))
               (overlays-in (line-beginning-position) (line-end-position)))))
@@ -239,7 +236,7 @@
       (setq ov
             (or
              ;; get existing overlay
-             (find-if
+             (wgrep-find-if
               (lambda (o)
                 (memq (overlay-get o 'face) '(wgrep-reject-face wgrep-done-face)))
               (overlays-in start (line-end-position)))
@@ -429,7 +426,7 @@
   (interactive)
   (let ((count 0))
     (save-excursion
-      (let ((not-yet (copy-seq wgrep-overlays)))
+      (let ((not-yet (copy-sequence wgrep-overlays)))
         (while wgrep-overlays
           (let ((ov (car wgrep-overlays)))
             (setq wgrep-overlays (cdr wgrep-overlays))
@@ -792,6 +789,20 @@ This command immediately changes the file buffer, although the buffer is not sav
       (error
        (wgrep-put-reject-face ov (prin1-to-string err))
        nil))))
+
+(defun wgrep-find-if (pred list)
+  (catch 'found
+    (while list
+      (when (funcall pred (car list))
+        (throw 'found (car list)))
+      (setq list (cdr list)))))
+
+;;;###autoload(add-hook 'grep-setup-hook 'wgrep-setup)
+(add-hook 'grep-setup-hook 'wgrep-setup)
+
+;; For `unload-feature'
+(defun wgrep-unload-function ()
+  (remove-hook 'grep-setup-hook 'wgrep-setup))
 
 (provide 'wgrep)
 
