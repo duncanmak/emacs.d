@@ -26,7 +26,7 @@
 (when (eq system-type 'gnu/linux)
   (setenv "PATH" (concat (getenv "PATH") ":/home/duncan/bin"))
   (setq ack-executable "ack-grep")
-  (set-face-attribute 'default nil :family "Droid Sans Mono" :height 120))
+  (set-face-attribute 'default nil :family "Droid Sans Mono" :height 100))
 
 ;;; Windows specific
 (when (eq system-type 'windows-nt)
