@@ -1,4 +1,5 @@
 (server-start)
+(load-theme 'tango-dark t)
 (desktop-save-mode 1)
 (setq-default indent-tabs-mode nil)
 (let ((default-directory "~/.emacs.d/site-lisp/"))
@@ -214,9 +215,10 @@
           (function (lambda ()
                       (imenu-add-menubar-index)
                       (setenv "NODE_NO_READLINE" "1")
-                      (set (make-local-variable 'tab-width) 2))
+                      (set (make-local-variable 'tab-width) 2)
                       (subword-mode t)
-                      ))
+                      )))
+
 ;;; Ruby
 (defun ruby-hook ()
   (add-to-list 'load-path "rinari")
@@ -331,4 +333,3 @@
 ;; Add the user-contributed repository
 (add-to-list 'package-archives
              '("marmalade" . "http://marmalade-repo.org/packages/"))
-
