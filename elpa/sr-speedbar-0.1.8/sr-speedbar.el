@@ -620,6 +620,10 @@ This advice can make `other-window' skip `sr-speedbar' window."
 
 (provide 'sr-speedbar)
 
+;;;###autoload
+(provide 'sr-speedbar)
+(require 'sr-speedbar)
+
 ;;; sr-speedbar.el ends here
 
 ;;; LocalWords:  sr Sebastain ecb Sep speedbar's  Recalc dframe keymaps pc
