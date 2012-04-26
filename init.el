@@ -6,8 +6,6 @@
   (normal-top-level-add-to-load-path '("."))
   (normal-top-level-add-subdirs-to-load-path))
 
-(require 'sr-speedbar)
-
 ;;; Mac specific
 (when (eq system-type 'darwin)
   (require 'ls-lisp)
