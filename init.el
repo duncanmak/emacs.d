@@ -204,6 +204,8 @@
 ;;; C#
 (add-hook 'csharp-mode-hook
           (function (lambda ()
+                      (electric-pair-mode -1)
+                      (electric-indent-mode -1)
                       (require 'flymake))))
 
 ;;; Coffeescript
