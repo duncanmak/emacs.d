@@ -245,7 +245,21 @@
   (ensime-scala-mode-hook)
   (electric-pair-mode -1)
   (electric-indent-mode -1)
-  (scala-electric-mode +1))
+  (scala-electric-mode +1)
+  (setq ensime-sem-high-faces
+        '(
+          (var . (:foreground "#ff2222"))
+          (val . (:foreground "#dddddd"))
+          (varField . (:foreground "#ff3333"))
+          (valField . (:foreground "#dddddd"))
+          (functionCall . (:foreground "#84BEE3"))
+          (param . (:foreground "#ffffff"))
+          (class . font-lock-type-face)
+          (trait . (:foreground "#084EA8"))
+          (object . (:foreground "#026DF7"))
+          (package . font-lock-preprocessor-face)
+          ))
+  )
 
 (add-hook 'scala-mode-hook 'scala-hook)
 
