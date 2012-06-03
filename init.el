@@ -49,6 +49,7 @@
       (find-file (cdr (assoc-string fname tocpl))))))
 (global-set-key "\C-x\C-r" 'recentf-open-files-compl)
 
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 ;;; iswitchb
 (require 'iswitchb)
@@ -309,6 +310,7 @@
  '(custom-safe-themes (quote ("64c1dadc18501f028b1008a03f315f609d7d29a888e08993c192c07b9c4babc2" "21d9280256d9d3cf79cbcf62c3e7f3f243209e6251b215aede5026e0c5ad853f" default)))
  '(display-time-mode t)
  '(ibuffer-display-summary nil)
+ '(indicate-empty-lines t)
  '(inhibit-startup-screen t)
  '(iswitchb-max-to-show 10)
  '(iswitchb-mode t)
@@ -320,6 +322,7 @@
  '(ruby-deep-indent-paren nil)
  '(scroll-conservatively 101)
  '(show-paren-mode t)
+ '(show-trailing-whitespace t)
  '(tool-bar-mode nil))
 
 (custom-set-faces
