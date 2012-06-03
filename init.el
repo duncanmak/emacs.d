@@ -6,6 +6,8 @@
   (normal-top-level-add-to-load-path '("."))
   (normal-top-level-add-subdirs-to-load-path))
 
+(global-undo-tree-mode)
+
 ;;; Mac specific
 (when (eq system-type 'darwin)
   (require 'ls-lisp)
@@ -64,7 +66,7 @@
 (add-to-list 'iswitchb-buffer-ignore "^[tT][aA][gG][sS]$")
 (add-to-list 'iswitchb-buffer-ignore "@")
 (defun iswitchb-local-keys ()
-  (mapc (lambda (K) 
+  (mapc (lambda (K)
           (let* ((key (car K)) (fun (cdr K)))
             (define-key iswitchb-mode-map (edmacro-parse-keys key) fun)))
         '(("<right>" . iswitchb-next-match)
