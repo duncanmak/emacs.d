@@ -37,6 +37,10 @@
 (global-set-key (kbd "C-c <up>")    'windmove-up)
 (global-set-key (kbd "C-c <down>")  'windmove-down)
 
+;;; diffstat
+(require 'diffstat)
+(add-hook 'diff-mode-hook (lambda () (local-set-key "\C-c\C-l" 'diffstat)))
+
 ;;; recentf
 (require 'recentf)
 (recentf-mode 1)
