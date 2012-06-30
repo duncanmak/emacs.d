@@ -324,6 +324,7 @@
  '(js2-cleanup-whitespace t)
  '(js2-mirror-mode t)
  '(pivotal-api-token "a6b179a9a3f1615a42752fd18d96fbb6")
+ '(puppet-indent-level 8)
  '(ruby-deep-indent-paren nil)
  '(scroll-conservatively 101)
  '(show-paren-mode t)
