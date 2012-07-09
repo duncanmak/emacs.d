@@ -188,6 +188,10 @@
           (lambda ()
             (electric-indent-mode +1)
             (electric-pair-mode +1)))
+(add-hook 'after-init-hook
+          #'(lambda ()
+              (when (locate-library "slime-js")
+                (require 'setup-slime-js))))
 
 ;;; Python
 
