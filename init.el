@@ -184,6 +184,10 @@
 ;;; javascript
 (autoload 'js2-mode "js2-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+(add-hook 'js-mode-hook
+          (lambda ()
+            (electric-indent-mode +1)
+            (electric-pair-mode +1)))
 
 ;;; Python
 
