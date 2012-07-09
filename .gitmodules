@@ -7,3 +7,9 @@
 [submodule "site-lisp/js2-mode"]
 	path = site-lisp/js2-mode
 	url = https://github.com/mooz/js2-mode.git
+[submodule "site-lisp/mark-multiple"]
+	path = site-lisp/mark-multiple
+	url = git://github.com/magnars/mark-multiple.el.git
+[submodule "site-lisp/js2-refactor"]
+	path = site-lisp/js2-refactor
+	url = git://github.com/magnars/js2-refactor.el.git
