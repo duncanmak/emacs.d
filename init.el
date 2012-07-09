@@ -207,7 +207,6 @@
                       (require 'flymake))))
 
 ;;; Coffeescript
-(add-to-list 'load-path "coffee-mode")
 (require 'coffee-mode)
 (add-hook 'coffee-mode-hook
           (function (lambda ()
@@ -219,9 +218,7 @@
 
 ;;; Ruby
 (defun ruby-hook ()
-  (add-to-list 'load-path "rinari")
   (require 'rinari)
-  (add-to-list 'load-path "rvm")
   (require 'rvm)
   (add-to-list 'load-path "ruby-debug-extra/emacs")
   (require 'rdebug)
