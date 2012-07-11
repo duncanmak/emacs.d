@@ -18,18 +18,21 @@
   (push "/usr/local/bin" exec-path)
   (global-set-key "\M-`" 'other-frame)
   (set-face-attribute 'default nil :family "Menlo" :height 140)
+  (set-fontset-font "fontset-default" 'unicode "Menlo")
   )
 
 ;;; Linux specific
 (when (eq system-type 'gnu/linux)
   (setenv "PATH" (concat (getenv "PATH") ":/home/duncan/bin"))
   (setq ack-executable "ack-grep")
-  (set-face-attribute 'default nil :family "Droid Sans Mono" :height 100))
+  (set-face-attribute 'default nil :family "Droid Sans Mono" :height 100)
+  (set-fontset-font "fontset-default" 'unicode "Droid Sans Mono"))
 
 ;;; Windows specific
 (when (eq system-type 'windows-nt)
   (push "C:\\Program Files (x86)\\Git\\bin" exec-path)
-  (set-face-attribute 'default nil :family "Consolas" :height 120))
+  (set-face-attribute 'default nil :family "Consolas" :height 120)
+  (set-fontset-font "fontset-default" 'unicode "Consolas"))
 
 ;;; windmove
 (global-set-key (kbd "C-c <left>")  'windmove-left)
@@ -317,6 +320,7 @@
  '(confirm-kill-emacs (quote y-or-n-p))
  '(custom-enabled-themes (quote (tango-dark)))
  '(custom-safe-themes (quote ("64c1dadc18501f028b1008a03f315f609d7d29a888e08993c192c07b9c4babc2" "21d9280256d9d3cf79cbcf62c3e7f3f243209e6251b215aede5026e0c5ad853f" default)))
+ '(display-battery-mode t)
  '(display-time-mode t)
  '(global-undo-tree-mode t)
  '(ibuffer-display-summary nil)
