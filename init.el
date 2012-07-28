@@ -214,7 +214,6 @@
                       (require 'flymake))))
 
 ;;; Coffeescript
-(require 'coffee-mode)
 (add-hook 'coffee-mode-hook
           (function (lambda ()
                       (imenu-add-menubar-index)
