@@ -314,6 +314,7 @@
  ;; If there is more than one, they won't work right.
  '(blink-cursor-mode nil)
  '(browse-kill-ring-quit-action (quote save-and-restore))
+ '(c-basic-offset 8)
  '(column-number-mode t)
  '(comint-process-echoes t)
  '(confirm-kill-emacs (quote y-or-n-p))
@@ -331,8 +332,9 @@
  '(js2-auto-indent-p t)
  '(js2-cleanup-whitespace t)
  '(js2-mirror-mode t)
+ '(nxml-child-indent 8)
  '(pivotal-api-token "a6b179a9a3f1615a42752fd18d96fbb6")
- '(puppet-indent-level 8)
+ '(puppet-indent-level 4)
  '(ruby-deep-indent-paren nil)
  '(scroll-conservatively 101)
  '(show-paren-mode t)
