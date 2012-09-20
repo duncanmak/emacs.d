@@ -112,6 +112,12 @@
 ;; Make all "yes or no" prompts show "y or n" instead
 (fset 'yes-or-no-p 'y-or-n-p)
 
+;;; Always uniquify buffers
+(require 'uniquify)
+(setq
+  uniquify-buffer-name-style 'post-forward
+  uniquify-separator ":")
+
 (global-set-key (kbd "C-x g") 'magit-status)
 
 (delete-selection-mode t)
