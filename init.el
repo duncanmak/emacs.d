@@ -30,6 +30,7 @@
 
 ;;; Windows specific
 (when (eq system-type 'windows-nt)
+  (push "C:\\Program Files\\Git\\bin" exec-path)
   (push "C:\\Program Files (x86)\\Git\\bin" exec-path)
   (set-face-attribute 'default nil :family "Consolas" :height 120)
   (set-fontset-font "fontset-default" 'unicode "Consolas"))
@@ -309,7 +310,7 @@
  '(js2-auto-indent-p t)
  '(js2-cleanup-whitespace t)
  '(js2-mirror-mode t)
- '(nxml-child-indent 8)
+ '(nxml-child-indent 4)
  '(pivotal-api-token "a6b179a9a3f1615a42752fd18d96fbb6")
  '(puppet-indent-level 4)
  '(ruby-deep-indent-paren nil)
