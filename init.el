@@ -58,6 +58,7 @@
 (global-set-key "\C-x\C-r" 'recentf-open-files-compl)
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
+(global-undo-tree-mode)
 
 ;;; iswitchb
 (require 'iswitchb)
@@ -300,7 +301,6 @@
  '(custom-safe-themes (quote ("64c1dadc18501f028b1008a03f315f609d7d29a888e08993c192c07b9c4babc2" "21d9280256d9d3cf79cbcf62c3e7f3f243209e6251b215aede5026e0c5ad853f" default)))
  '(display-battery-mode t)
  '(display-time-mode t)
- '(global-undo-tree-mode t)
  '(ibuffer-display-summary nil)
  '(indicate-empty-lines t)
  '(inhibit-startup-screen t)
