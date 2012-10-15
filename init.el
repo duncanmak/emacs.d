@@ -299,6 +299,11 @@
 (require 'golden-ratio)
 (golden-ratio-enable)
 
+;;; gitty
+(load "~/.emacs.d/elpa/gitty-1.0/gitty.el")
+(require 'gitty)
+(gitty-mode)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
