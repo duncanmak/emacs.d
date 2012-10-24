@@ -240,19 +240,22 @@
                       )))
 
 ;;; Ruby
+(require 'ruby-mode)
 (defun ruby-hook ()
   (require 'rinari)
-  (require 'rvm)
+  (rinari-launch)
   (add-to-list 'load-path "ruby-debug-extra/emacs")
   (require 'rdebug)
-  (rinari-launch)
   (imenu-add-menubar-index)
+  (flymake-ruby-load)
   (inf-ruby-keys)
   (subword-mode +1)
   (electric-pair-mode -1)
   (electric-indent-mode -1)
   (ruby-electric-mode)
-  (ad-activate 'run-ruby))
+  (require 'rvm)
+  (ad-activate 'run-ruby)
+  )
 
 (defadvice run-ruby (after rvm-run-ruby-advice)
   "Activate RVM when run-ruby"
@@ -296,8 +299,8 @@
 (load-file (expand-file-name "~/.emacs.d/rcirc-additions.el"))
 
 ;;; golden-ratio
-(require 'golden-ratio)
-(golden-ratio-enable)
+;; (require 'golden-ratio)
+;; (golden-ratio-enable)
 
 ;;; gitty
 (load "~/.emacs.d/elpa/gitty-1.0/gitty.el")
@@ -317,8 +320,6 @@
  '(confirm-kill-emacs (quote y-or-n-p))
  '(custom-enabled-themes (quote (tango-dark)))
  '(custom-safe-themes (quote ("64c1dadc18501f028b1008a03f315f609d7d29a888e08993c192c07b9c4babc2" "21d9280256d9d3cf79cbcf62c3e7f3f243209e6251b215aede5026e0c5ad853f" default)))
- '(display-battery-mode t)
- '(display-time-mode t)
  '(global-undo-tree-mode t)
  '(ibuffer-display-summary nil)
  '(indicate-empty-lines t)
