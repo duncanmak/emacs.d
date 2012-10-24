@@ -3,7 +3,7 @@
 ;;; Code:
 
 
-;;;### (autoloads (defjump) "jump" "jump.el" (20555 38881))
+;;;### (autoloads (defjump) "jump" "jump.el" (20615 27532))
 ;;; Generated autoloads from jump.el
 
 (autoload 'defjump "jump" "\
@@ -37,7 +37,7 @@ find the current method which defaults to `which-function'.
 
 ;;;***
 
-;;;### (autoloads nil nil ("jump-pkg.el") (20555 38881 427910))
+;;;### (autoloads nil nil ("jump-pkg.el") (20615 27532 91815))
 
 ;;;***
 
