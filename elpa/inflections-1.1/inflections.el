@@ -2,9 +2,9 @@
 
 ;; Copyright (C) 2006 Dmitry Galinsky <dima dot exe at gmail dot com>
 
-;; Authors: Dmitry Galinsky, Howard Yeh
-;; URL: http://emacs-rails.rubyforge.org/svn/trunk/inflections.el
-;; Version: 1.0
+;; Author: Dmitry Galinsky, Howard Yeh
+;; URL: https://github.com/eschulte/jump.el
+;; Version: 1.1
 ;; Created: 2007-11-02
 ;; Keywords: ruby rails languages oop
 
@@ -28,19 +28,21 @@
 
 ;;; Code:
 (require 'cl)
+
 (defvar inflection-singulars    nil)
 (defvar inflection-plurals      nil)
 (defvar inflection-irregulars   nil)
 (defvar inflection-uncountables nil)
 
 (defmacro define-inflectors (&rest specs)
-  (loop for (type . rest) in specs do
-        (case type
-          (:singular (push rest inflection-singulars))
-          (:plural (push rest inflection-plurals))
-          (:irregular (push rest inflection-irregulars))
-          (:uncountable (setf inflection-uncountables
-                              (append rest inflection-uncountables))))))
+  (cons 'progn
+        (loop for (type . rest) in specs
+              collect (case type
+                        (:singular `(push (quote ,rest) inflection-singulars))
+                        (:plural `(push (quote ,rest) inflection-plurals))
+                        (:irregular `(push (quote ,rest) inflection-irregulars))
+                        (:uncountable `(setf inflection-uncountables
+                                             (append (quote ,rest) inflection-uncountables)))))))
 
 (defmacro string=~ (regex string &rest body)
   "regex matching similar to the =~ operator found in other languages."
@@ -146,6 +148,10 @@
               for plurals = (string=~ from str (sub to))
               when plurals do (return plurals))
         str)))
+
+;; Local Variables:
+;; byte-compile-warnings: (not cl-functions)
+;; End:
 
 (provide 'inflections)
 ;;; inflections.el ends here
