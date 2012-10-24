@@ -299,8 +299,8 @@
 (load-file (expand-file-name "~/.emacs.d/rcirc-additions.el"))
 
 ;;; golden-ratio
-;; (require 'golden-ratio)
-;; (golden-ratio-enable)
+(require 'golden-ratio)
+(golden-ratio-enable)
 
 ;;; gitty
 (load "~/.emacs.d/elpa/gitty-1.0/gitty.el")
