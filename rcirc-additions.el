@@ -1,5 +1,7 @@
 (require 'rcirc)
 
+(load-file (expand-file-name "~/.emacs.d/rcirc-controls.el"))
+
 (setq rcirc-server-alist
       '(("irc.xamarin.com" :port 32000 :nick "duncan" :password "duncan:foobar:xamarin" :full-name "Duncan Mak" :encryption tls)))
 
@@ -104,6 +106,7 @@
             (if (string-match (regexp-opt '("irc.xamarin.com"))
                               (buffer-name))
                 (rcirc-reconnect-mode 1))
+            (require 'rcirc-controls)
             (rcirc-track-minor-mode 1)
             (require 'arrange-buffers)
             (define-key rcirc-mode-map (kbd "<f7>") '(lambda () (interactive) (arrange-buffers "^#" "rcirc-mode")))))
