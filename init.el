@@ -6,16 +6,6 @@
   (normal-top-level-add-to-load-path '("."))
   (normal-top-level-add-subdirs-to-load-path))
 
-;;; el-get
-(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
-(unless (require 'el-get nil 'noerror)
-  (with-current-buffer
-      (url-retrieve-synchronously
-       "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
-    (goto-char (point-max))
-    (eval-print-last-sexp)))
-(el-get 'sync)
-
 ;;; Mac specific
 (when (eq system-type 'darwin)
   (require 'ls-lisp)
@@ -200,6 +190,10 @@
 
 ;;; java
 (add-hook 'java-mode-hook 'c-hook)
+
+;;; typescript
+(require 'typescript)
+(add-to-list 'auto-mode-alist '("\\.ts$" . typescript-mode))
 
 ;;; javascript
 (autoload 'js2-mode "js2-mode" nil t)
