@@ -2,6 +2,8 @@
 (load-theme 'tango-dark t)
 (desktop-save-mode 1)
 (setq-default indent-tabs-mode nil)
+(emacs-lock-mode 'kill)
+
 (let ((default-directory "~/.emacs.d/site-lisp/"))
   (normal-top-level-add-to-load-path '("."))
   (normal-top-level-add-subdirs-to-load-path))
