@@ -5,7 +5,7 @@
 
 ;; Author: Steve Purcell <steve@sanityinc.com>
 ;; URL: https://github.com/purcell/flymake-easy
-;; Version: 0.1
+;; Version: 0.2
 ;; Keywords: convenience, internal
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -84,6 +84,9 @@ Argument LOCATION where to create the temporary copy: one of 'tempdir (default) 
           (set (make-local-variable 'flymake-allowed-file-name-masks)
                '(("." flymake-easy--flymake-init)))
           (set (make-local-variable 'flymake-err-line-patterns) err-line-patterns)
+          (dolist (var '(flymake-warning-re
+                         flymake-warn-line-regexp))
+            (set (make-local-variable var) "^[wW]arn"))
           (flymake-mode t))
       (message "Not enabling flymake: '%s' command not found" executable))))
 
