@@ -1,13 +1,13 @@
 
 ;;; ibuffer-vc.el --- Group ibuffer's list by VC project, or show VC status
 ;;
-;; Copyright (C) 2011 Steve Purcell
+;; Copyright (C) 2011-2012 Steve Purcell
 ;;
 ;; Author: Steve Purcell <steve@sanityinc.com>
 ;; Keywords: themes
 ;; X-URL: http://github.com/purcell/ibuffer-vc
 ;; URL: http://github.com/purcell/ibuffer-vc
-;; Version: 0.4
+;; Version: 0.5
 ;;
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -39,7 +39,12 @@
 ;;   (add-hook 'ibuffer-hook
 ;;     (lambda ()
 ;;       (ibuffer-vc-set-filter-groups-by-vc-root)
-;;       (ibuffer-do-sort-by-alphabetic)))
+;;       (unless (eq ibuffer-sorting-mode 'alphabetic)
+;;         (ibuffer-do-sort-by-alphabetic))))
+;;
+;; Alternatively, use `ibuffer-vc-generate-filter-groups-by-vc-root'
+;; to programmatically obtain a list of filter groups that you can
+;; combine with your own custom groups.
 ;;
 ;; To include vc status info in the ibuffer list, add either
 ;; vc-status-mini or vc-status to `ibuffer-formats':
@@ -115,6 +120,7 @@ file is not under version control"
   (ibuffer-awhen (ibuffer-vc-root buf)
     (equal qualifier it)))
 
+;;;###autoload
 (defun ibuffer-vc-generate-filter-groups-by-vc-root ()
   "Create a set of ibuffer filter groups based on the vc root dirs of buffers"
   (let ((roots (ibuffer-remove-duplicates
@@ -129,7 +135,12 @@ file is not under version control"
   "Set the current filter groups to filter by vc root dir."
   (interactive)
   (setq ibuffer-filter-groups (ibuffer-vc-generate-filter-groups-by-vc-root))
-  (ibuffer-update nil t))
+  (message "ibuffer-vc: groups set")
+  (let ((ibuf (get-buffer "*Ibuffer*")))
+    (when ibuf
+        (with-current-buffer ibuf
+          (pop-to-buffer ibuf)
+          (ibuffer-update nil t)))))
 
 
 ;;; Display vc status info in the ibuffer list

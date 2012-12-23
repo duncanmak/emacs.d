@@ -3,9 +3,14 @@
 ;;; Code:
 
 
-;;;### (autoloads (ibuffer-vc-set-filter-groups-by-vc-root) "ibuffer-vc"
-;;;;;;  "ibuffer-vc.el" (20244 49235))
+;;;### (autoloads (ibuffer-vc-set-filter-groups-by-vc-root ibuffer-vc-generate-filter-groups-by-vc-root)
+;;;;;;  "ibuffer-vc" "ibuffer-vc.el" (20694 44414))
 ;;; Generated autoloads from ibuffer-vc.el
+
+(autoload 'ibuffer-vc-generate-filter-groups-by-vc-root "ibuffer-vc" "\
+Create a set of ibuffer filter groups based on the vc root dirs of buffers
+
+\(fn)" nil nil)
 
 (autoload 'ibuffer-vc-set-filter-groups-by-vc-root "ibuffer-vc" "\
 Set the current filter groups to filter by vc root dir.
@@ -17,7 +22,7 @@ Set the current filter groups to filter by vc root dir.
 
 ;;;***
 
-;;;### (autoloads nil nil ("ibuffer-vc-pkg.el") (20244 49235 978694))
+;;;### (autoloads nil nil ("ibuffer-vc-pkg.el") (20694 44414 140599))
 
 ;;;***
 
