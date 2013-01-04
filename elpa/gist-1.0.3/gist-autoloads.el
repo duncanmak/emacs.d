@@ -5,7 +5,7 @@
 
 ;;;### (autoloads (gist-fetch gist-list gist-region-or-buffer-private
 ;;;;;;  gist-region-or-buffer gist-buffer-private gist-buffer gist-region-private
-;;;;;;  gist-region) "gist" "gist.el" (20579 27425))
+;;;;;;  gist-region) "gist" "gist.el" (20711 16440))
 ;;; Generated autoloads from gist.el
 
 (autoload 'gist-region "gist" "\
@@ -62,7 +62,7 @@ Displays a list of all of the current user's gists in a new buffer.
 
 ;;;***
 
-;;;### (autoloads nil nil ("gist-pkg.el") (20579 27425 803951))
+;;;### (autoloads nil nil ("gist-pkg.el") (20711 16440 224370))
 
 ;;;***
 
