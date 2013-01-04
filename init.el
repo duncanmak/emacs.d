@@ -1,3 +1,24 @@
+;; Turn off mouse interface early in startup to avoid momentary display
+(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+
+;; No splash screen please ... jeez
+(setq inhibit-startup-message t)
+
+;; Auto refresh buffers
+(global-auto-revert-mode 1)
+
+;; Also auto refresh dired, but be quiet about it
+(setq global-auto-revert-non-file-buffers t)
+(setq auto-revert-verbose nil)
+
+(require 'package)
+;; Add the original Emacs Lisp Package Archive
+(add-to-list 'package-archives
+             '("elpa" . "http://tromey.com/elpa/"))
+;; Add the user-contributed repository
+(add-to-list 'package-archives
+             '("marmalade" . "http://marmalade-repo.org/packages/"))
+
 (server-start)
 (load-theme 'tango-dark t)
 (desktop-save-mode 1)
@@ -49,9 +70,32 @@
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 
+;;; shell
+(defun comint-delchar-or-eof-or-kill-buffer (arg)
+  (interactive "p")
+  (if (null (get-buffer-process (current-buffer)))
+      (kill-buffer)
+    (comint-delchar-or-maybe-eof arg)))
+
+(add-hook 'shell-mode-hook
+          (lambda ()
+            (define-key shell-mode-map
+              (kbd "C-d") 'comint-delchar-or-eof-or-kill-buffer)))
+
 ;;; diffstat
 (require 'diffstat)
 (add-hook 'diff-mode-hook (lambda () (local-set-key "\C-c\C-l" 'diffstat)))
+
+(global-set-key [remap goto-line] 'goto-line-with-feedback)
+
+(defun goto-line-with-feedback ()
+  "Show line numbers temporarily, while prompting for the line number input"
+  (interactive)
+  (unwind-protect
+      (progn
+        (linum-mode 1)
+        (goto-line (read-number "Goto line: ")))
+    (linum-mode -1)))
 
 ;;; recentf
 (require 'recentf)
@@ -127,7 +171,40 @@
   uniquify-buffer-name-style 'post-forward
   uniquify-separator ":")
 
+;;; Magit
 (global-set-key (kbd "C-x g") 'magit-status)
+
+(eval-after-load 'magit
+  '(progn
+     (defun magit-toggle-whitespace ()
+       (interactive)
+       (if (member "-w" magit-diff-options)
+           (magit-dont-ignore-whitespace)
+         (magit-ignore-whitespace)))
+     (defun magit-ignore-whitespace ()
+       (interactive)
+       (add-to-list 'magit-diff-options "-w")
+       (magit-refresh))
+     (defun magit-dont-ignore-whitespace ()
+       (interactive)
+       (setq magit-diff-options (remove "-w" magit-diff-options))
+       (magit-refresh))
+     (define-key magit-status-mode-map (kbd "W") 'magit-toggle-whitespace)
+
+     ;; full screen magit-status
+     (defadvice magit-status (around magit-fullscreen activate)
+       (window-configuration-to-register :magit-fullscreen)
+       ad-do-it
+       (delete-other-windows))
+
+     (defun magit-quit-session ()
+       "Restores the previous window configuration and kills the magit buffer"
+       (interactive)
+       (kill-buffer)
+       (jump-to-register :magit-fullscreen))
+
+     (define-key magit-status-mode-map (kbd "q") 'magit-quit-session)
+     ))
 
 (delete-selection-mode t)
 (show-paren-mode t)
@@ -190,6 +267,12 @@
 (add-hook 'dired-load-hook (function (lambda () (setq dired-x-hands-off-my-keys nil) (load "dired-x"))))
 (define-key global-map (kbd "C-x C-j") 'dired-jump)
 
+(eval-after-load 'dired-details
+  '(progn
+     (setq-default dired-details-hidden-string "--- ")
+     (dired-details-install)
+     ))
+
 (defun c-hook ()
   (imenu-add-menubar-index)
   (subword-mode +1)
@@ -250,7 +333,6 @@
   (require 'rdebug)
   (imenu-add-menubar-index)
   (flymake-ruby-load)
-  (inf-ruby-keys)
   (subword-mode +1)
   (electric-pair-mode -1)
   (electric-indent-mode -1)
@@ -347,11 +429,3 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(c-annotation-face ((t (:foreground "gray")))))
-
-(require 'package)
-;; Add the original Emacs Lisp Package Archive
-(add-to-list 'package-archives
-             '("elpa" . "http://tromey.com/elpa/"))
-;; Add the user-contributed repository
-(add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/"))
