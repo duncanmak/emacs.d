@@ -32,14 +32,20 @@
 ;;;###autoload
 (require 'eieio)
 
+(defgroup gh nil
+  "Github API client libraries."
+  :group 'applications)
+
 (defclass gh-object ()
   ())
 
 (defmethod gh-object-read :static ((obj gh-object) data)
-  (let ((target (if (object-p obj) obj
-                  (make-instance obj))))
-    (gh-object-read-into target data)
-    target))
+  (if data
+      (let ((target (if (object-p obj) obj
+                      (make-instance obj))))
+        (gh-object-read-into target data)
+        target)
+    eieio-unbound))
 
 (defmethod gh-object-reader :static ((obj gh-object))
   (apply-partially 'gh-object-read obj))
@@ -78,7 +84,7 @@
                      (substring string 0 (- (length string) 1)))))
         (git (executable-find "git")))
   (funcall strip (shell-command-to-string
-                  (concat git " config --global github." key)))))
+                  (concat git " config github." key)))))
 
 (defun gh-set-config (key value)
   "Sets a GitHub specific value to the global Git config."
@@ -88,3 +94,7 @@
 
 (provide 'gh-common)
 ;;; gh-common.el ends here
+
+;; Local Variables:
+;; indent-tabs-mode: nil
+;; End:

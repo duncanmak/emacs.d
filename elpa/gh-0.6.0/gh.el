@@ -1,4 +1,4 @@
-;;; gh.el --- main entry point for gh.el library
+;;; gh.el --- Github API client libraries
 
 ;; Copyright (C) 2011  Yann Hodique
 
@@ -30,9 +30,9 @@
 (require 'gh-pulls)
 (require 'gh-issues)
 
-(defgroup gh nil
-  "Github support library."
-  :group 'applications)
-
 (provide 'gh)
 ;;; gh.el ends here
+
+;; Local Variables:
+;; indent-tabs-mode: nil
+;; End:
