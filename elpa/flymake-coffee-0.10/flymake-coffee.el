@@ -3,7 +3,7 @@
 ;;
 ;;; Author: Steve Purcell <steve@sanityinc.com>
 ;;; Homepage: https://github.com/purcell/flymake-coffee
-;;; Version: 0.9
+;;; Version: 0.10
 ;;; Package-Requires: ((flymake-easy "0.1"))
 ;;
 ;;; Commentary:
@@ -23,6 +23,16 @@
 (require 'flymake-easy)
 ;; Doesn't strictly require coffee-mode, but will use 'coffee-command if set
 
+(defgroup flymake-coffee nil
+  "Flymake support for CoffeeScript"
+  :prefix "flymake-coffee-"
+  :group 'flymake)
+
+(defcustom flymake-coffee-coffeelint-configuration-file nil
+  "File that contains custom coffeelint configuration."
+  :type 'string
+  :group 'flymake-coffee)
+
 (defconst flymake-coffee-err-line-patterns
   '(;; coffee
     ("^SyntaxError: In \\([^,]+\\), \\(.+\\) on line \\([0-9]+\\)" 1 3 nil 2)
@@ -33,7 +43,10 @@
 (defun flymake-coffee-command (filename)
   "Construct a command that flymake can use to check coffeescript source."
   (if (executable-find "coffeelint")
-      (list "coffeelint" "--csv" filename)
+      (append '("coffeelint")
+              (when flymake-coffee-coffeelint-configuration-file
+                (list "-f" flymake-coffee-coffeelint-configuration-file))
+              (list "--csv" filename))
     (list (if (boundp 'coffee-command) coffee-command "coffee")
           filename)))
 
