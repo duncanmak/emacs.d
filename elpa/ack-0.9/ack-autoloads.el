@@ -3,7 +3,7 @@
 ;;; Code:
 
 
-;;;### (autoloads (ack) "ack" "ack.el" (20694 44433))
+;;;### (autoloads (ack) "ack" "ack.el" (20771 3264))
 ;;; Generated autoloads from ack.el
 
 (autoload 'ack "ack" "\
@@ -20,8 +20,8 @@ minibuffer:
 
 ;;;***
 
-;;;### (autoloads (pcomplete/ack) "pcmpl-ack" "pcmpl-ack.el" (20694
-;;;;;;  44433))
+;;;### (autoloads (pcomplete/ack) "pcmpl-ack" "pcmpl-ack.el" (20771
+;;;;;;  3264))
 ;;; Generated autoloads from pcmpl-ack.el
 
 (autoload 'pcomplete/ack "pcmpl-ack" "\
@@ -35,7 +35,7 @@ long options.
 
 ;;;***
 
-;;;### (autoloads nil nil ("ack-pkg.el") (20694 44433 976914))
+;;;### (autoloads nil nil ("ack-pkg.el") (20771 3264 571718))
 
 ;;;***
 
