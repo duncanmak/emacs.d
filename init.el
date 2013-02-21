@@ -355,13 +355,12 @@
 (add-to-list 'load-path "ensime/elisp/")
 (setenv "ENSIME_JVM_ARGS" "-Xms128M -Xmx512M -Dfile.encoding=UTF-8")
 (require 'ensime)
-
+(require 'scala-mode2)
 (defun scala-hook ()
   (subword-mode +1)
   (ensime-scala-mode-hook)
   (electric-pair-mode -1)
   (electric-indent-mode -1)
-  (scala-electric-mode +1)
   (setq ensime-sem-high-faces
         '(
           (var . (:foreground "#ff2222"))
