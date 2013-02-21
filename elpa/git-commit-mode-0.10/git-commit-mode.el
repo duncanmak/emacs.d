@@ -1,14 +1,13 @@
 ;;; git-commit-mode.el --- Major mode for editing git commit messages
-;;; -*- coding: utf-8; lexical-binding: t -*-
 
-;; Copyright (c) 2012 Sebastian Wiesner <lunaryorn@gmail.com>
+;; Copyright (c) 2012, 2013 Sebastian Wiesner <lunaryorn@gmail.com>
 ;; Copyright (c) 2010 Florian Ragwitz.
 ;;
 ;; Author: Sebastian Wiesner <lunaryorn@gmail.com>
 ;;      Florian Ragwitz <rafl@debian.org>
 ;; Maintainer: Sebastian Wiesner <lunaryorn@gmail.com>
 ;; URL: https://github.com/lunaryorn/git-modes
-;; Version: 0.9
+;; Version: 0.10
 ;; Keywords: convenience vc git
 
 ;; This file is not part of GNU Emacs.
@@ -47,12 +46,12 @@
 ;;
 ;; Provide commands to insert standard headers into commit messages.
 ;;
-;; - C-c C-h s or C-c C-s inserts Signed-off-by (`git-commit-signoff').
-;; - C-C C-h a inserts Acked-by (`git-commit-ack').
-;; - C-c C-h t inserts Tested-by (`git-commit-test').
-;; - C-c C-h r inserts Reviewed-by (`git-commit-review').
-;; - C-c C-h o inserts Cc (`git-commit-cc').
-;; - C-c C-h p inserts Reported-by (`git-commit-reported').
+;; - C-c C-x s or C-c C-s inserts Signed-off-by (`git-commit-signoff').
+;; - C-C C-x a inserts Acked-by (`git-commit-ack').
+;; - C-c C-x t inserts Tested-by (`git-commit-test').
+;; - C-c C-x r inserts Reviewed-by (`git-commit-review').
+;; - C-c C-x o inserts Cc (`git-commit-cc').
+;; - C-c C-x p inserts Reported-by (`git-commit-reported').
 
 ;; * Committing
 ;;
@@ -79,6 +78,7 @@
 
 (defgroup git-commit nil
   "Mode for editing git commit messages"
+  :prefix "git-commit-"
   :group 'tools)
 
 (defgroup git-commit-faces nil
@@ -88,59 +88,59 @@
   :group 'faces)
 
 (defface git-commit-summary-face
-  '((t (:inherit font-lock-type-face)))
+  '((t :inherit font-lock-type-face))
   "Face used to highlight the summary in git commit messages"
   :group 'git-commit-faces)
 
 (defface git-commit-overlong-summary-face
-  '((t (:inherit font-lock-warning-face)))
+  '((t :inherit font-lock-warning-face))
   "Face used to highlight overlong parts of git commit message summaries"
   :group 'git-commit-faces)
 
 (defface git-commit-nonempty-second-line-face
-  '((t (:inherit font-lock-warning-face)))
+  '((t :inherit font-lock-warning-face))
   "Face used to highlight text on the second line of git commit messages"
   :group 'git-commit-faces)
 
 (defface git-commit-note-face
-  '((t (:inherit font-lock-string-face)))
+  '((t :inherit font-lock-string-face))
   "Face used to highlight notes in git commit messages"
   :group 'git-commit-faces)
 
 (defface git-commit-pseudo-header-face
-  '((t (:inherit font-lock-string-face)))
+  '((t :inherit font-lock-string-face))
   "Font used to hightlight pseudo headers in git commit messages"
   :group 'git-commit-faces)
 
 (defface git-commit-known-pseudo-header-face
-  '((t (:inherit font-lock-keyword-face)))
+  '((t :inherit font-lock-keyword-face))
   "Face used to hightlight common pseudo headers in git commit messages"
   :group 'git-commit-faces)
 
 (defface git-commit-branch-face
-  '((t (:inherit font-lock-variable-name-face)))
+  '((t :inherit font-lock-variable-name-face))
   "Face used to highlight the branch name in comments in git commit messages"
   :group 'git-commit-faces)
 
 (defface git-commit-no-branch-face
-  '((t (:inherit git-commit-branch-face)))
+  '((t :inherit git-commit-branch-face))
   "Face used when a commit is going to be made outside of any branches"
   :group 'git-commit-faces)
 
 (defface git-commit-comment-heading-face
-  '((t (:inherit git-commit-known-pseudo-header-face)))
+  '((t :inherit git-commit-known-pseudo-header-face))
   "Face used to highlight section headings in the default
 comments in git commit messages"
   :group 'git-commit-faces)
 
 (defface git-commit-comment-file-face
-  '((t (:inherit git-commit-pseudo-header-face)))
+  '((t :inherit git-commit-pseudo-header-face))
   "Face used to highlight file names in the default comments in
 git commit messages"
   :group 'git-commit-faces)
 
 (defface git-commit-comment-action-face
-  '((t (:inherit git-commit-branch-face)))
+  '((t :inherit git-commit-branch-face))
   "Face used to highlight what has happened to files in the
 default comments in git commit messages"
   :group 'git-commit-faces)
@@ -496,12 +496,12 @@ Known comment headings are provided by `git-commit-comment-headings'."
     ;; Short shortcut ;) for the frequently used signoff header
     (define-key map (kbd "C-c C-s") 'git-commit-signoff)
     ;; Verbose shortcuts for all headers to avoid conflicts with magit bindings
-    (define-key map (kbd "C-c C-h s") 'git-commit-signoff)
-    (define-key map (kbd "C-c C-h a") 'git-commit-ack)
-    (define-key map (kbd "C-c C-h t") 'git-commit-test)
-    (define-key map (kbd "C-c C-h r") 'git-commit-review)
-    (define-key map (kbd "C-c C-h o") 'git-commit-cc)
-    (define-key map (kbd "C-c C-h p") 'git-commit-reported)
+    (define-key map (kbd "C-c C-x s") 'git-commit-signoff)
+    (define-key map (kbd "C-c C-x a") 'git-commit-ack)
+    (define-key map (kbd "C-c C-x t") 'git-commit-test)
+    (define-key map (kbd "C-c C-x r") 'git-commit-review)
+    (define-key map (kbd "C-c C-x o") 'git-commit-cc)
+    (define-key map (kbd "C-c C-x p") 'git-commit-reported)
     ;; Committing
     (define-key map (kbd "C-c C-c") 'git-commit-commit)
     map)
@@ -600,7 +600,8 @@ basic structure of and errors in git commit messages."
               '(("/COMMIT_EDITMSG\\'" . git-commit-mode)
                 ("/NOTES_EDITMSG\\'" . git-commit-mode)
                 ("/MERGE_MSG\\'" . git-commit-mode)
-                ("/TAG_EDITMSG\\'" . git-commit-mode))))
+                ("/TAG_EDITMSG\\'" . git-commit-mode)
+                ("/PULLREQ_EDITMSG\\'" . git-commit-mode))))
 
 (provide 'git-commit-mode)
 

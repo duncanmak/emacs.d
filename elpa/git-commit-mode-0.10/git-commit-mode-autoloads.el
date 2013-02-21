@@ -4,7 +4,7 @@
 
 
 ;;;### (autoloads (git-commit-mode git-commit-mode-magit-setup) "git-commit-mode"
-;;;;;;  "git-commit-mode.el" (20597 57248))
+;;;;;;  "git-commit-mode.el" (20771 3260))
 ;;; Generated autoloads from git-commit-mode.el
 
 (autoload 'git-commit-mode-magit-setup "git-commit-mode" "\
@@ -27,12 +27,12 @@ basic structure of and errors in git commit messages.
 
 (eval-after-load 'magit #'(progn (substitute-key-definition 'magit-log-edit-toggle-signoff 'git-commit-signoff magit-log-edit-mode-map) (substitute-key-definition 'magit-log-edit-commit 'git-commit-log-edit-commit magit-log-edit-mode-map)))
 
-(setq auto-mode-alist (append auto-mode-alist '(("/COMMIT_EDITMSG\\'" . git-commit-mode) ("/NOTES_EDITMSG\\'" . git-commit-mode) ("/MERGE_MSG\\'" . git-commit-mode) ("/TAG_EDITMSG\\'" . git-commit-mode))))
+(setq auto-mode-alist (append auto-mode-alist '(("/COMMIT_EDITMSG\\'" . git-commit-mode) ("/NOTES_EDITMSG\\'" . git-commit-mode) ("/MERGE_MSG\\'" . git-commit-mode) ("/TAG_EDITMSG\\'" . git-commit-mode) ("/PULLREQ_EDITMSG\\'" . git-commit-mode))))
 
 ;;;***
 
-;;;### (autoloads nil nil ("git-commit-mode-pkg.el") (20597 57248
-;;;;;;  439111))
+;;;### (autoloads nil nil ("git-commit-mode-pkg.el") (20771 3260
+;;;;;;  584904))
 
 ;;;***
 
