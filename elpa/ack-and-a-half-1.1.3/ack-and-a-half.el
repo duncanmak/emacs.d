@@ -11,7 +11,7 @@
 ;;
 ;; Author: Jacob Helwig <jacob+ack@technosorcery.net>
 ;; Homepage: http://technosorcery.net
-;; Version: 1.1.2
+;; Version: 1.1.3
 ;; URL: https://github.com/jhelwig/ack-and-a-half
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -369,10 +369,6 @@ non-nil, treat FROM as a regular expression."
           (setq pos (length string)))))
     res))
 
-(defun ack-and-a-half-shell-quote (string)
-  "Wrap STRING in single quotes, and quote existing single quotes to make shell safe."
-  (concat "'" (ack-and-a-half-string-replace "'" "'\\''" string) "'"))
-
 (defun ack-and-a-half-run (directory regexp pattern &rest arguments)
   "Run ack in DIRECTORY with ARGUMENTS."
   (let ((default-directory (if directory
@@ -382,7 +378,7 @@ non-nil, treat FROM as a regular expression."
                             (ack-and-a-half-arguments-from-options regexp)
                             arguments
                             (list "--")
-                            (list (ack-and-a-half-shell-quote pattern))
+                            (list (shell-quote-argument pattern))
                             ))
     (make-local-variable 'compilation-buffer-name-function)
     (let (compilation-buffer-name-function)
