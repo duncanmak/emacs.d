@@ -1,11 +1,10 @@
-;;; gitconfig-mode.el --- Major mode for editing .gitconfig files
-;;; -*- coding: utf-8; lexical-binding: t -*-
+;;; gitconfig-mode.el --- Major mode for editing .gitconfig files -*- lexical-binding: t; -*-
 
-;; Copyright (c) 2012 Sebastian Wiesner <lunaryorn@gmail.com>
+;; Copyright (c) 2012, 2013 Sebastian Wiesner <lunaryorn@gmail.com>
 ;;
 ;; Author: Sebastian Wiesner <lunaryorn@gmail.com>
-;; URL: https://github.com/lunaryorn/gitconfig-mode
-;; Version: 0.2
+;; URL: https://github.com/lunaryorn/git-modes
+;; Version: 0.3
 ;; Keywords: convenience vc git
 
 ;; This file is not part of GNU Emacs.
@@ -33,7 +32,7 @@
 (require 'conf-mode)
 
 (defun gitconfig-line-indented-p ()
-  "Determine whether the current line is intended correctly.
+  "Determine whether the current line is indented correctly.
 
 Return t if so, or nil otherwise."
   (save-excursion
@@ -41,22 +40,28 @@ Return t if so, or nil otherwise."
     (or (looking-at "^\\[\\_<.*?\\]")
         (looking-at "^\t\\_<\\(?:\\sw|\\s_\\)"))))
 
+(defun gitconfig-point-in-indentation-p ()
+  "Determine whether the point is in the indentation of the current line.
+
+Return t if so, or nil otherwise."
+  (save-excursion
+    (let ((pos (point)))
+      (back-to-indentation)
+      (< pos (point)))))
+
 (defun gitconfig-indent-line ()
   "Indent the current line."
   (interactive)
   (unless (gitconfig-line-indented-p)
-    (let ((point-in-line (point)))
-      (back-to-indentation)
-      (setq point-in-line (- point-in-line
-                             (- (point) (line-beginning-position))))
+    (let ((old-point (point-marker))
+          (was-in-indent (gitconfig-point-in-indentation-p)))
       (beginning-of-line)
       (delete-horizontal-space)
       (unless (= (char-after) ?\[)
-        (insert-tab)
-        (setq point-in-line (+ point-in-line 1)))
-      (if (>= point-in-line (line-beginning-position))
-          (goto-char point-in-line)
-        (back-to-indentation)))))
+        (insert-char ?\t 1))
+      (if was-in-indent
+          (back-to-indentation)
+        (goto-char (marker-position old-point))))))
 
 (defvar gitconfig-mode-syntax-table
   (let ((table (make-syntax-table conf-unix-mode-syntax-table)))
@@ -65,7 +70,7 @@ Return t if so, or nil otherwise."
     table)
   "Syntax table to use in .gitconfig buffers.")
 
-(defvar gitconfig-font-lock-keywords
+(defvar gitconfig-mode-font-lock-keywords
   `(
     ;; Highlight section and subsection gitconfig headers, and override
     ;; syntactic fontification in these.
@@ -84,7 +89,7 @@ Return t if so, or nil otherwise."
 (define-derived-mode gitconfig-mode conf-unix-mode "Gitconfig"
   "A major mode for editing .gitconfig files."
   ;; .gitconfig is indented with tabs only
-  (conf-mode-initialize "#" gitconfig-font-lock-keywords)
+  (conf-mode-initialize "#" gitconfig-mode-font-lock-keywords)
   (setq indent-tabs-mode t)
   (set (make-local-variable 'indent-line-function)
        'gitconfig-indent-line))

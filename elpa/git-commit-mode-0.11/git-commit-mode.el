@@ -1,4 +1,4 @@
-;;; git-commit-mode.el --- Major mode for editing git commit messages
+;;; git-commit-mode.el --- Major mode for editing git commit messages -*- lexical-binding: t; -*-
 
 ;; Copyright (c) 2012, 2013 Sebastian Wiesner <lunaryorn@gmail.com>
 ;; Copyright (c) 2010 Florian Ragwitz.
@@ -7,7 +7,7 @@
 ;;      Florian Ragwitz <rafl@debian.org>
 ;; Maintainer: Sebastian Wiesner <lunaryorn@gmail.com>
 ;; URL: https://github.com/lunaryorn/git-modes
-;; Version: 0.10
+;; Version: 0.11
 ;; Keywords: convenience vc git
 
 ;; This file is not part of GNU Emacs.
@@ -70,11 +70,6 @@
 ;; `git-commit-mode'.
 
 ;;; Code:
-
-(require 'server)
-
-(eval-when-compile
-  (defvar magit-log-header-end))
 
 (defgroup git-commit nil
   "Mode for editing git commit messages"
@@ -151,7 +146,9 @@ default comments in git commit messages"
 If the current buffer has clients from the Emacs server, call
 `server-edit' to mark the buffer as done and let the clients
 continue, otherwise kill the buffer via `kill-buffer'."
-  (if server-buffer-clients
+  (if (and (fboundp 'server-edit)
+           (boundp 'server-buffer-clients)
+           server-buffer-clients)
       (server-edit) ; The message buffer comes from emacsclient
     (kill-buffer)))
 
@@ -166,6 +163,16 @@ commit was successful, or nil otherwise."
   :type '(radio (function-item :doc "Save the buffer and end the session."
                                git-commit-end-session)
                 (function)))
+
+(defcustom git-commit-confirm-commit t
+  "Whether to ask for confirmation before committing.
+
+If t, ask for confirmation before creating a commit with style
+errors, unless the commit is forced.  If nil, never ask for
+confirmation before committing."
+  :group 'git-commit
+  :type '(choice (const :tag "On style errors" t)
+                 (const :tag "Never" nil)))
 
 (defun git-commit-has-style-errors-p ()
   "Check whether the current buffer has style errors.
@@ -183,20 +190,23 @@ otherwise."
 
 Check for stylistic errors in the current message, unless FORCE
 is non-nil.  If stylistic errors are found, ask the user to
-confirm commit.
+confirm commit depending on `git-commit-confirm-commit'.
 
 Return t if the commit may be performed, or nil otherwise."
-  (if force t
-    (if (git-commit-has-style-errors-p)
-        (yes-or-no-p "Buffer has style errors. Commit anyway?")
-      t)))
+  (cond
+   ((or force (not git-commit-confirm-commit))
+    t)
+   ((git-commit-has-style-errors-p)
+    (yes-or-no-p "Buffer has style errors. Commit anyway?"))
+   (t t)))
 
 (defun git-commit-log-edit-commit (&optional force)
   "Finish edits and create a new commit.
 
-Check for stylistic errors in the current message, unless FORCE
-is non-nil.  If stylistic errors are found, ask the user to
-confirm the commit."
+Check for stylistic errors in the current commit, and ask the
+user for confirmation depending on `git-commit-confirm-commit'.
+If FORCE is non-nil or if a raw prefix arg is given, commit
+immediately without asking."
   (interactive "P")
   (if (git-commit-may-do-commit force)
       (call-interactively 'magit-log-edit-commit)
@@ -205,11 +215,12 @@ confirm the commit."
 (defun git-commit-commit (&optional force)
   "Finish editing the commit message and commit.
 
-Saves the buffer and checks for style errors, unless prefix
-argument FORCE is given.
+Check for stylistic errors in the current commit, and ask the
+user for confirmation depending on `git-commit-confirm-commit'.
+If FORCE is non-nil or if a raw prefix arg is given, commit
+immediately without asking.
 
-Call `git-commit-commit-function` to actually perform the commit.
-Customize this variable as needed.
+Call `git-commit-commit-function' to actually perform the commit.
 
 Return t, if the commit was successful, or nil otherwise."
   (interactive "P")
@@ -561,11 +572,6 @@ basic structure of and errors in git commit messages."
   ;; Filling according to the guidelines
   (setq fill-column 72)
   (turn-on-auto-fill)
-  ;; Comment settings
-  (set (make-local-variable 'comment-start) "#")
-  (set (make-local-variable 'comment-start-skip)
-       (concat (regexp-quote comment-start) "+\\s-*"))
-  (set (make-local-variable 'comment-end) "")
   ;; Recognize changelog-style paragraphs
   (set (make-local-variable 'paragraph-start)
        (concat paragraph-start "\\|*\\|("))
@@ -573,9 +579,6 @@ basic structure of and errors in git commit messages."
   (when (fboundp 'toggle-save-place)
     (toggle-save-place 0)))
 
-;;;###autoload
-(eval-after-load 'session
-  #'(add-to-list 'session-mode-disable-list 'git-commit-mode))
 
 ;;;###autoload
 ;; Overwrite magit-log-edit-mode to derive it from git-commit-mode

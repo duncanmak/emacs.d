@@ -4,7 +4,7 @@
 
 
 ;;;### (autoloads (git-commit-mode git-commit-mode-magit-setup) "git-commit-mode"
-;;;;;;  "git-commit-mode.el" (20771 3260))
+;;;;;;  "git-commit-mode.el" (20785 10017 0 0))
 ;;; Generated autoloads from git-commit-mode.el
 
 (autoload 'git-commit-mode-magit-setup "git-commit-mode" "\
@@ -21,8 +21,6 @@ basic structure of and errors in git commit messages.
 
 \(fn)" t nil)
 
-(eval-after-load 'session #'(add-to-list 'session-mode-disable-list 'git-commit-mode))
-
 (eval-after-load 'magit #'(define-derived-mode magit-log-edit-mode git-commit-mode "Magit Log Edit"))
 
 (eval-after-load 'magit #'(progn (substitute-key-definition 'magit-log-edit-toggle-signoff 'git-commit-signoff magit-log-edit-mode-map) (substitute-key-definition 'magit-log-edit-commit 'git-commit-log-edit-commit magit-log-edit-mode-map)))
@@ -31,8 +29,8 @@ basic structure of and errors in git commit messages.
 
 ;;;***
 
-;;;### (autoloads nil nil ("git-commit-mode-pkg.el") (20771 3260
-;;;;;;  584904))
+;;;### (autoloads nil nil ("git-commit-mode-pkg.el") (20785 10017
+;;;;;;  954212 0))
 
 ;;;***
 

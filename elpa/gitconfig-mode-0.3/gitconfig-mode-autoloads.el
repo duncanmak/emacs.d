@@ -4,7 +4,7 @@
 
 
 ;;;### (autoloads (gitconfig-mode) "gitconfig-mode" "gitconfig-mode.el"
-;;;;;;  (20597 57247))
+;;;;;;  (20785 10017 0 0))
 ;;; Generated autoloads from gitconfig-mode.el
 
 (autoload 'gitconfig-mode "gitconfig-mode" "\
@@ -16,8 +16,8 @@ A major mode for editing .gitconfig files.
 
 ;;;***
 
-;;;### (autoloads nil nil ("gitconfig-mode-pkg.el") (20597 57247
-;;;;;;  519253))
+;;;### (autoloads nil nil ("gitconfig-mode-pkg.el") (20785 10017
+;;;;;;  32032 0))
 
 ;;;***
 
