@@ -314,8 +314,7 @@
 (add-hook 'csharp-mode-hook
           (function (lambda ()
                       (electric-pair-mode -1)
-                      (electric-indent-mode -1)
-                      (require 'flymake))))
+                      (electric-indent-mode -1))))
 
 ;;; Coffeescript
 (add-hook 'coffee-mode-hook
@@ -334,7 +333,6 @@
   (add-to-list 'load-path "ruby-debug-extra/emacs")
   (require 'rdebug)
   (imenu-add-menubar-index)
-  (flymake-ruby-load)
   (subword-mode +1)
   (electric-pair-mode -1)
   (electric-indent-mode -1)
