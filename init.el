@@ -39,6 +39,8 @@
   (setq mac-option-modifier 'meta)
   (setenv "PATH" (concat "/usr/local/bin:" (getenv "PATH")))
   (push "/usr/local/bin" exec-path)
+  (setenv "PATH" (concat "/usr/local/share/python:" (getenv "PATH")))
+  (push "/usr/local/share/python" exec-path)
   (global-set-key "\M-`" 'other-frame)
   (set-face-attribute 'default nil :family "Menlo" :height 140)
   (set-fontset-font "fontset-default" 'unicode "Menlo")
@@ -69,6 +71,9 @@
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+
+;;; flycheck
+(add-hook 'after-init-hook #'global-flycheck-mode)
 
 ;;; shell
 (defun comint-delchar-or-eof-or-kill-buffer (arg)
