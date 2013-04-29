@@ -10,9 +10,6 @@
 [submodule "site-lisp/js2-refactor"]
 	path = site-lisp/js2-refactor
 	url = git://github.com/magnars/js2-refactor.el.git
-[submodule "el-get/el-get"]
-	path = el-get/el-get
-	url = http://github.com/dimitri/el-get.git
 [submodule "site-lisp/golden-ratio"]
 	path = site-lisp/golden-ratio
 	url = git://github.com/roman/golden-ratio.el.git
