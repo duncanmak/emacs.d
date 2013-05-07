@@ -41,6 +41,8 @@
   (push "/usr/local/bin" exec-path)
   (setenv "PATH" (concat "/usr/local/share/python:" (getenv "PATH")))
   (push "/usr/local/share/python" exec-path)
+  (setenv "PATH" (concat "/usr/local/share/npm/bin:" (getenv "PATH")))
+  (push "/usr/local/share/npm/bin" exec-path)
   (global-set-key "\M-`" 'other-frame)
   (set-face-attribute 'default nil :family "Menlo" :height 140)
   (set-fontset-font "fontset-default" 'unicode "Menlo")
@@ -310,7 +312,7 @@
 (add-hook 'python-mode-hook
           (lambda ()
             (subword-mode +1)
-            (setq indent-tabs-mode t
+            (setq indent-tabs-mode nil
                   tab-width        2
                   py-indent-offset 2
                   python-indent    2)))
