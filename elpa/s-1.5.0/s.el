@@ -3,7 +3,7 @@
 ;; Copyright (C) 2012 Magnar Sveen
 
 ;; Author: Magnar Sveen <magnars@gmail.com>
-;; Version: 1.4.0
+;; Version: 1.5.0
 ;; Keywords: strings
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -340,6 +340,26 @@ attention to case differences."
   "Return the reverse of S."
   (apply 'string (nreverse (string-to-list s))))
 
+(defun s-match-strings-all (regex string)
+  "Return a list of every match for REGEX in STRING.
+
+Each element itself is a list of matches, as per `match-string'."
+  (let (all-strings
+        (i 0))
+    (while (and (< i (length string))
+                (string-match regex string i))
+      (if (= (match-end 0) i)
+          (setq i (1+ i))
+        (setq i (match-end 0)))
+      (let (strings
+            (num-matches (/ (length (match-data)) 2))
+            (match 0))
+        (while (/= match num-matches)
+          (push (match-string match string) strings)
+          (setq match (1+ match)))
+        (push (nreverse strings) all-strings)))
+    (nreverse all-strings)))
+
 (defun s-match (regexp s &optional start)
   "When the given expression matches the string, this function returns a list
 of the whole matching string and a string for each matched subexpressions.
@@ -460,6 +480,39 @@ transformation."
                    (if v v (signal 's-format-resolve md)))
                (set-match-data replacer-match-data)))) template)
       (set-match-data saved-match-data))))
+
+(defvar s-lex-value-as-lisp nil
+  "If `t' interpolate lisp values as lisp.
+
+`s-lex-format' inserts values with (format \"%S\").")
+
+(defun s-lex-fmt|expand (fmt)
+  "Expand FMT into lisp."
+  (list 's-format fmt (quote 'aget)
+        (append '(list)
+                (mapcar
+                 (lambda (matches)
+                   (list
+                    'cons
+                    (cadr matches)
+                    `(format
+                      (if s-lex-value-as-lisp "%S" "%s")
+                      ,(intern (cadr matches)))))
+                 (s-match-strings-all "${\\([^}]+\\)}" fmt)))))
+
+(defmacro s-lex-format (format-str)
+  "`s-format' with the lexical environment.
+
+FORMAT-STR may use the `s-format' variable reference to refer to
+any lexical variable:
+
+ (let ((x 1))
+   (s-lex-format \"x is: ${x}\"))
+
+The values of the lexical variables are interpolated with \"%s\"
+unless the variable `s-lex-value-as-lisp' is `t' and then they
+are interpolated with \"%S\"."
+  (s-lex-fmt|expand format-str))
 
 (provide 's)
 ;;; s.el ends here
