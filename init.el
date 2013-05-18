@@ -1,3 +1,9 @@
+;;; init.el --- Duncan's emacs file
+;;;
+;;; Commentary:
+;;;
+;;; Code:
+;;;
 ;; Turn off mouse interface early in startup to avoid momentary display
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 
@@ -8,6 +14,7 @@
 (global-auto-revert-mode 1)
 
 ;; Also auto refresh dired, but be quiet about it
+(require 'dired)
 (setq global-auto-revert-non-file-buffers t)
 (setq auto-revert-verbose nil)
 
@@ -241,46 +248,6 @@
 (add-hook 'lisp-interaction-mode-hook 'lisp-hook)
 (add-hook 'scheme-mode-hook           'lisp-hook)
 (add-hook 'lisp-mode-hook             'lisp-hook)
-
-;;; dired
-(require 'dired)
-(defun my-dired-init ()
-  "Bunch of stuff to run for dired, either immediately or when it's
-        loaded."
-  ;; <add other stuff here>
-  (define-key dired-mode-map [return] 'dired-single-buffer)
-  (define-key dired-mode-map [mouse-1] 'dired-single-buffer-mouse)
-  (define-key dired-mode-map "^"
-    (function
-     (lambda nil (interactive) (dired-single-buffer "..")))))
-
-;; if dired's already loaded, then the keymap will be bound
-(if (boundp 'dired-mode-map)
-    ;; we're good to go; just add our bindings
-    (my-dired-init)
-  ;; it's not loaded yet, so add our bindings to the load-hook
-  (add-hook 'dired-load-hook 'my-dired-init))
-(global-set-key [(f5)] 'dired-single-magic-buffer)
-(global-set-key [(control f5)] (function
-				(lambda nil (interactive)
-				  (dired-single-magic-buffer default-directory))))
-(global-set-key [(shift f5)] (function
-			      (lambda nil (interactive)
-				(message "Current directory is: %s" default-directory))))
-(global-set-key [(meta f5)] 'dired-single-toggle-buffer-name)
-(define-key dired-mode-map (kbd "C-s") 'dired-isearch-forward)
-(define-key dired-mode-map (kbd "C-r") 'dired-isearch-backward)
-(define-key dired-mode-map (kbd "ESC C-s") 'dired-isearch-forward-regexp)
-(define-key dired-mode-map (kbd "ESC C-r") 'dired-isearch-backward-regexp)
-
-(add-hook 'dired-load-hook (function (lambda () (setq dired-x-hands-off-my-keys nil) (load "dired-x"))))
-(define-key global-map (kbd "C-x C-j") 'dired-jump)
-
-(eval-after-load 'dired-details
-  '(progn
-     (setq-default dired-details-hidden-string "--- ")
-     (dired-details-install)
-     ))
 
 (defun c-hook ()
   (imenu-add-menubar-index)
