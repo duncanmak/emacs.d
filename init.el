@@ -234,7 +234,6 @@
    'paredit-backward-delete
    'paredit-close-round)
   (paredit-mode +1)
-  (define-key paredit-mode-map (kbd "RET") 'paredit-newline)
   (define-key paredit-mode-map (kbd "C-j") nil)
   (define-key paredit-mode-map (kbd "[") 'paredit-open-round)
   (define-key paredit-mode-map (kbd "]") 'paredit-close-round)
@@ -248,6 +247,11 @@
 (add-hook 'lisp-interaction-mode-hook 'lisp-hook)
 (add-hook 'scheme-mode-hook           'lisp-hook)
 (add-hook 'lisp-mode-hook             'lisp-hook)
+
+;;; nrepl
+(add-hook 'nrepl-mode-hook             'subword-mode)
+(add-hook 'nrepl-mode-hook             'paredit-mode)
+(add-hook 'nrepl-interaction-mode-hook 'nrepl-turn-on-eldoc-mode)
 
 (defun c-hook ()
   (imenu-add-menubar-index)
