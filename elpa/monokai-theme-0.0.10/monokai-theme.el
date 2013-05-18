@@ -4,7 +4,7 @@
 ;;
 ;; Author: Lorenzo Villani <lorenzo@villani.me>
 ;; URL: https://github.com/lvillani/el-monokai-theme
-;; Version: 0.0.9
+;; Version: 0.0.10
 ;;
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@
    `(minibuffer-prompt ((t (:foreground ,monokai-yellow-dark))))
    `(modeline ((t (:background ,monokai-gray-lightest :foreground ,monokai-gray-light))))
    `(region ((t (:background ,monokai-gray-darker))))
-   `(show-paren-match-face ((t (:background ,monokai-gray-darker))))
+   `(show-paren-match-face ((t (:background ,monokai-gray-lightest))))
    ;; Main
    `(font-lock-builtin-face ((t (:foreground ,monokai-green))))
    `(font-lock-comment-face ((t (:foreground ,monokai-yellow-dark))))

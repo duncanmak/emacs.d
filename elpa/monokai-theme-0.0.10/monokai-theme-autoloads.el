@@ -3,7 +3,7 @@
 ;;; Code:
 
 
-;;;### (autoloads nil "monokai-theme" "monokai-theme.el" (20785 10016
+;;;### (autoloads nil "monokai-theme" "monokai-theme.el" (20886 60749
 ;;;;;;  0 0))
 ;;; Generated autoloads from monokai-theme.el
 
@@ -11,7 +11,7 @@
 
 ;;;***
 
-;;;### (autoloads nil nil ("monokai-theme-pkg.el") (20785 10016 435990
+;;;### (autoloads nil nil ("monokai-theme-pkg.el") (20886 60749 716775
 ;;;;;;  0))
 
 ;;;***
