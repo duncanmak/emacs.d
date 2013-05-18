@@ -225,6 +225,16 @@
 (delete-selection-mode t)
 (show-paren-mode t)
 
+;;; html
+(eval-after-load "sgml-mode"
+  '(progn
+     (require 'tagedit)
+     (tagedit-add-paredit-like-keybindings)
+     (add-hook 'html-mode-hook (lambda () (tagedit-mode 1)))))
+(add-hook 'sgml-mode-hook 'zencoding-mode) ;; Auto-start on any markup modes
+(add-hook 'css-mode-hook  'zencoding-mode) ;; enable Emmet's css abbreviation.
+
+;;; lisp
 (defun lisp-hook ()
   (require 'paredit)
   (require 'eldoc) ; if not already loaded
