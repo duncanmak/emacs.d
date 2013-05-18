@@ -100,6 +100,7 @@ File: flycheck.info,  Node: Features,  Next: Installation,  Prev: Introduction, 
         * Rust (using 'rustc')
         * RST (ReStructuredText, using Docutils)
         * Sass
+        * Scala
         * SCSS
         * Shell scripts (using Bash, Dash, or Zsh depending on the type
           of shell script)
@@ -178,12 +179,38 @@ File: flycheck.info,  Node: Syntax checking,  Next: Selection,  Prev: Usage,  Up
 2.1 Syntax checking
 ===================
 
-In 'flycheck-mode' the buffer is automatically checked on the fly when
+By default, 'flycheck-mode' checks syntax automatically when
 
+   * the mode is enabled,
    * the file is saved,
    * or if new lines are inserted.
 
-You can also check the buffer manually:
+However, you can customize automatic syntax checking with
+'flycheck-check-syntax-automatically':
+
+ -- User Option: flycheck-check-syntax-automatically
+     When Flycheck should check syntax automatically.
+
+     This variable is list of events that may trigger syntax checks.
+     The following events are known:
+
+     'mode-enabled' checks syntax if 'flycheck-mode' is enabled.
+
+     'save' checks syntax after the buffer was saved.
+
+     'new-line' checks syntax after a new line was inserted.
+
+     An syntax check is only conducted for events that are contained in
+     this list.  For instance, the following setting will cause Flycheck
+     to never check syntax if a new line was inserted:
+
+          (setq flycheck-check-syntax-automatically '(mode-enabled save))
+
+     If the list is empty syntax is never checked automatically.  In
+     this case, use 'flycheck-buffer' to check syntax manually.
+
+Regardless of automatic syntax checking you can also check the buffer
+manually:
 
 'C-c ! c'
 'M-x flycheck-buffer'
@@ -191,21 +218,62 @@ You can also check the buffer manually:
 
    Each syntax check is comprised of the following steps:
 
-  1. Select a suitable syntax checker.  *Note Selection::, for more
+  1. Run hooks in 'flycheck-before-syntax-check-hook'.
+  2. Clear error information from previous syntax checks.
+  3. Select a suitable syntax checker.  *Note Selection::, for more
      information on how syntax checkers are selected.
-  2. Copy the contents of the buffer to be checked to a temporary file.
-  3. Execute the syntax checker tool(s).
-  4. Parse the output of the tool, and report all errors and warnings.
+  4. Copy the contents of the buffer to be checked to a temporary file.
+  5. Execute the syntax checker.
+  6. Parse the output of the tool, and report all errors and warnings.
      *Note Reporting::, for more information.
-  5. Run hooks in 'flycheck-after-syntax-check-hook'.
+  7. If the buffer can be checked with another syntax checker, continue
+     from step 4, but with the next syntax checker.  This is called
+     "chaining" of syntax checkers.
+  8. Run hooks in 'flycheck-after-syntax-check-hook'.
 
  -- User Option: flycheck-after-syntax-check-hook
-     This variable is a list of function to execute after a syntax check
-     is completed, including all chained syntax checkers.
+     Functions to run after each syntax check.
 
-     By the time these functions are called, all errors and warnings are
-     already reported.  *Note Reporting::, for more information about
-     error reporting.
+     This hook is run after a syntax check was finished.
+
+     At this point, all chained checkers were run, and all errors were
+     parsed, highlighted and reported.  *Note Reporting::, for more
+     information about error reporting.  The variable
+     'flycheck-current-errors' contains all errors from all syntax
+     checkers run during the syntax check, so you can use the various
+     error analysis functions.
+
+     Note that this hook does not run after each individual syntax
+     checker in the syntax checker chain, but only after the last
+     checker.
+
+     This variable is a normal hook.  *Note (elisp)Hooks::.
+
+ -- User Option: flycheck-before-syntax-check-hook
+     Functions to run before each syntax check.
+
+     This hook is run right before a syntax check starts.
+
+     Error information from the previous syntax check is not cleared
+     before this hook runs.
+
+     Note that this hook does not run before each individual syntax
+     checker in the syntax checker chain, but only before the first
+     checker.
+
+     This variable is a normal hook.  *Note (elisp)Hooks::.
+
+   There is also a hook run whenever a syntax check fails:
+
+ -- User Option: flycheck-syntax-check-failed-hook
+     Functions to run if a syntax check failed.
+
+     This hook is run whenever an error occurs during Flycheck's
+     internal processing.  No information about the error is given to
+     this hook.
+
+     You should use this hook to conduct additional cleanup actions when
+     Flycheck failed.
 
      This variable is a normal hook.  *Note (elisp)Hooks::.
 
@@ -319,27 +387,10 @@ files are provided by Flycheck:
      The configuration file for the 'javascript-jshint' syntax checker.
 
  -- User Option: flycheck-rubocoprc
-     The configuration file for the 'ruby-rubocup' syntax checker.
+     The configuration file for the 'ruby-rubocop' syntax checker.
 
  -- User Option: flycheck-tidyrc
      The configuration file for the 'html-tidy' syntax checker.
-
-   All configuration file variables are interpreted according to the
-following rules:
-
-   If the variable contains a plain file name _without_ any slash, e.g.
-'.jshintrc', this file is searched
-
-  1. in the buffer's directory,
-  2. any ancestors thereof,
-  3. and in the 'HOME' directory eventually.
-
-If the buffer has no 'buffer-file-name', only the 'HOME' directory is
-searched.
-
-   If the variable contains a _path with_ a slash, e.g.  './.jshintrc'
-or '~/.jshintrc', the path is expanded against the buffer's directory
-using 'expand-file-name'.
 
    Customize these variables using 'M-x customize-group RET
 flycheck-config-files'.  Use 'flycheck-describe-checker' to find out
@@ -353,9 +404,38 @@ instance, the following checks the Javascript file always with
      // flycheck-jshintrc: "../.jshintrc"
      // End:
 
-   Some syntax checkers have options that cannot be changed in
-configuration files.  These options can be changed by various variables.
-Customize these with 'M-x customize-group RET flycheck-options'.
+   These configuration files are located using the functions in
+'flycheck-locate-config-file-functions':
+
+ -- User Option: flycheck-locate-config-file-functions
+     Functions to locate syntax checker configuration files.
+
+     Each function in this hook must accept two arguments: The value of
+     the configuration file variable, and the syntax checker symbol.  It
+     must return either a string with an absolute path to the
+     configuration file, or nil, if it cannot locate the configuration
+     file.
+
+     The functions in this hook are called in order of appearance, until
+     a function returns non-nil.  The configuration file returned by
+     that function is then given to the syntax checker if it exists.
+
+   With the default value of this variable, configuration files are
+located by the following algorithm:
+
+  1. If the configuration file variable contains a path a directory
+     separator, expand the path against the buffer's default directory
+     and use the resulting path as configuration file.
+  2. If Projectile (https://github.com/bbatsov/projectile) is available
+     and the current buffer is part of a project project, search the
+     configuration file in the root directory of the project.
+  3. If the buffer has a file name, search the buffer's directory and
+     any ancestors thereof for the configuration file.
+  4. Eventually attempt to locate the configuration file in the user's
+     home directory.
+
+   If any of these steps succeeds, the subsequent steps are not
+executed.
 
 
 File: flycheck.info,  Node: Reporting,  Next: Navigation,  Prev: Configuration,  Up: Usage
@@ -366,7 +446,7 @@ File: flycheck.info,  Node: Reporting,  Next: Navigation,  Prev: Configuration, 
 Errors and warnings from a syntax checker are
    * reported in the mode line or in a popup buffer, depending on the
      length of the error messages,
-   * indicated by fringe icons,
+   * indicated according to 'flycheck-indication-mode',
    * and highlighted in the buffer with 'flycheck-error-face' and
      'flycheck-warning-face' respectively, according to
      'flycheck-highlighting-mode'
@@ -399,11 +479,22 @@ Errors and warnings from a syntax checker are
      to a column.  Column information is hence ignored.
 
      If set to 'nil' highlighting is completely disabled.  Errors will
-     only be reported via fringe icons and error message popups.
+     still be reported in the mode line and in error message popups, and
+     indicated according to 'flycheck-indication-mode'.
 
      Note that this variable does _not_ affect error _navigation_.
      'next-error' and 'previous-error' always jump to the error column,
      regardless of the highlighting mode.
+
+ -- User Option: flycheck-indication-mode
+     This variable determines how to indicate errors:
+
+     If set to 'left-fringe' or 'right-fringe', indicate errors and
+     warnings in the left and right fringe respectively.
+
+     If set to 'nil', do not indicate errors.  Errors will still be
+     reported in the mode line and in error message popups, and
+     highlighted according to 'flycheck-highlighting-mode'.
 
    To view an error message, either hover the mouse of the highlighted
 error, or move the point to the highlighted error and wait for a short
@@ -623,8 +714,7 @@ Checkers are declared with 'flycheck-declare-checker':
                checker configuration.  Define this variable with
                'flycheck-def-config-file-var'.
 
-               If the configuration file is found according to the rules
-               documented in *note Configuration::, the cell is
+               If the configuration file is found, the cell is
                substituted with the OPTION and the absolute path to the
                configuration file as string.  Otherwise the cell is
                simply dropped from the arguments of the syntax checker.
@@ -1327,6 +1417,7 @@ This appendix provides a comprehensive changelog of all releases:
 * Menu:
 
 * master        :: unreleased
+* 0.11          :: May 01, 2013
 * 0.10          :: Apr 21, 2013
 * 0.9           :: Apr 13, 2013
 * 0.8           :: Apr 09, 2013
@@ -1634,7 +1725,7 @@ File: flycheck.info,  Node: 0.9,  Next: 0.10,  Prev: 0.8,  Up: Changes
           locations
 
 
-File: flycheck.info,  Node: 0.10,  Next: master,  Prev: 0.9,  Up: Changes
+File: flycheck.info,  Node: 0.10,  Next: 0.11,  Prev: 0.9,  Up: Changes
 
 0.10 (Apr 21, 2013)
 ===================
@@ -1686,7 +1777,42 @@ File: flycheck.info,  Node: 0.10,  Next: master,  Prev: 0.9,  Up: Changes
           CodeSniffer (https://github.com/lunaryorn/flycheck/issues/118)
 
 
-File: flycheck.info,  Node: master,  Prev: 0.10,  Up: Changes
+File: flycheck.info,  Node: 0.11,  Next: master,  Prev: 0.10,  Up: Changes
+
+0.11 (May 01, 2013)
+===================
+
+   * New syntax checkers:
+
+        * Scala (https://github.com/lunaryorn/flycheck/issues/124)
+
+   * New features:
+
+        * Customizable error indication with control of the fringe side,
+          via 'flycheck-indication-mode'
+        * Customizable automatic syntax checking, via
+          'flycheck-check-syntax-automatically'
+          (https://github.com/lunaryorn/flycheck/issues/128)
+        * Customizable configuration file search, via
+          'flycheck-locate-config-file-functions'
+          (https://github.com/lunaryorn/flycheck/issues/133)
+        * Find configuration files in Projectile
+          (https://github.com/bbatsov/projectile) projects
+        * Add 'flycheck-before-syntax-check-hook' and
+          'flycheck-syntax-check-failed-hook'
+
+   * Improvements:
+
+        * The 'ruby' syntax checker now differentiates warnings from
+          errors (https://github.com/lunaryorn/flycheck/issues/123)
+        * Faces are now in a separate customization group
+
+   * Bug fixes:
+
+        * Add missing customization group for syntax checker options
+
+
+File: flycheck.info,  Node: master,  Prev: 0.11,  Up: Changes
 
 master (unreleased)
 ===================
@@ -2275,6 +2401,7 @@ order of their appearance in the default value of 'flycheck-checkers':
    * 'ruby'
    * 'rust'
    * 'sass'
+   * 'scala'
    * 'scss'
    * 'sh-dash'
    * 'sh-bash'
@@ -2295,19 +2422,21 @@ Function and Variable Index
  [index ]
 * Menu:
 
-* flycheck-after-syntax-check-hook:      Syntax checking.     (line  27)
-* flycheck-buffer:                       Syntax checking.     (line  15)
+* flycheck-after-syntax-check-hook:      Syntax checking.     (line  58)
+* flycheck-before-syntax-check-hook:     Syntax checking.     (line  76)
+* flycheck-buffer:                       Syntax checking.     (line  41)
+* flycheck-check-syntax-automatically:   Syntax checking.     (line  15)
 * flycheck-checker:                      Selection.           (line  41)
 * flycheck-checkers:                     Selection.           (line   9)
 * flycheck-chktexrc:                     Configuration.       (line  25)
-* flycheck-clear:                        Reporting.           (line  72)
+* flycheck-clear:                        Reporting.           (line  83)
 * flycheck-coffeelintrc:                 Configuration.       (line  28)
-* flycheck-copy-messages-as-kill:        Reporting.           (line  55)
+* flycheck-copy-messages-as-kill:        Reporting.           (line  66)
 * flycheck-count-errors:                 Error API.           (line  71)
 * flycheck-current-errors:               Error API.           (line  67)
 * flycheck-declare-checker:              Declaration.         (line   8)
-* flycheck-def-config-file-var:          Declaration.         (line 251)
-* flycheck-def-option-var:               Declaration.         (line 267)
+* flycheck-def-config-file-var:          Declaration.         (line 250)
+* flycheck-def-option-var:               Declaration.         (line 266)
 * flycheck-describe-checker:             Selection.           (line  70)
 * flycheck-error-face:                   Reporting.           (line  14)
 * flycheck-error-new:                    Error API.           (line  39)
@@ -2317,16 +2446,19 @@ Function and Variable Index
 * flycheck-flake8-maximum-complexity:    Configuration.       (line  10)
 * flycheck-flake8-maximum-line-length:   Configuration.       (line  14)
 * flycheck-flake8rc:                     Configuration.       (line  31)
-* flycheck-google-messages:              Reporting.           (line  60)
+* flycheck-google-messages:              Reporting.           (line  71)
 * flycheck-has-errors-p:                 Error API.           (line  76)
 * flycheck-highlighting-mode:            Reporting.           (line  28)
+* flycheck-indication-mode:              Reporting.           (line  49)
 * flycheck-jshintrc:                     Configuration.       (line  34)
+* flycheck-locate-config-file-functions: Configuration.       (line  58)
 * flycheck-next-error:                   Navigation.          (line  23)
 * flycheck-parse-xml-string:             Error parser API.    (line   6)
 * flycheck-phpcs-standard:               Configuration.       (line  18)
 * flycheck-previous-error:               Navigation.          (line  31)
 * flycheck-rubocoprc:                    Configuration.       (line  37)
 * flycheck-select-checker:               Selection.           (line  32)
+* flycheck-syntax-check-failed-hook:     Syntax checking.     (line  92)
 * flycheck-tidyrc:                       Configuration.       (line  40)
 * flycheck-warning-face:                 Reporting.           (line  15)
 
@@ -2336,49 +2468,50 @@ Tag Table:
 Node: Top734
 Node: Introduction2083
 Node: Features2984
-Node: Installation4430
-Node: Activation5604
-Node: Usage5955
-Node: Syntax checking6578
-Node: Selection7840
-Node: Configuration10421
-Node: Reporting13193
-Node: Navigation16184
-Node: Mode line17980
-Node: Extending18881
-Node: Declaration19480
-Node: Error parsers31911
-Node: Option filters32895
-Node: Examples33234
-Node: Simple example33666
-Node: Predicate example36730
-Node: Configuration example38711
-Node: Chaining example41370
-Node: API42756
-Node: Error API43544
-Node: Error parser API46145
-Node: Contribution46371
-Node: Reporting issues47047
-Node: Contributing syntax checkers47783
-Node: Contributing code48578
-Node: Unit tests49918
-Node: Changes51205
-Node: 0.151821
-Node: 0.252105
-Node: 0.352383
-Node: 0.452619
-Node: 0.553394
-Node: 0.654614
-Node: 0.6.157464
-Node: 0.757613
-Node: 0.7.158627
-Node: 0.859342
-Node: 0.960854
-Node: 0.1061350
-Node: master63404
-Node: Credits63510
-Node: GNU Free Documentation License66209
-Node: Syntax checkers91361
-Node: Function and Variable Index92337
+Node: Installation4446
+Node: Activation5620
+Node: Usage5971
+Node: Syntax checking6594
+Node: Selection10355
+Node: Configuration12936
+Node: Reporting16476
+Node: Navigation19971
+Node: Mode line21767
+Node: Extending22668
+Node: Declaration23267
+Node: Error parsers35624
+Node: Option filters36608
+Node: Examples36947
+Node: Simple example37379
+Node: Predicate example40443
+Node: Configuration example42424
+Node: Chaining example45083
+Node: API46469
+Node: Error API47257
+Node: Error parser API49858
+Node: Contribution50084
+Node: Reporting issues50760
+Node: Contributing syntax checkers51496
+Node: Contributing code52291
+Node: Unit tests53631
+Node: Changes54918
+Node: 0.155566
+Node: 0.255850
+Node: 0.356128
+Node: 0.456364
+Node: 0.557139
+Node: 0.658359
+Node: 0.6.161209
+Node: 0.761358
+Node: 0.7.162372
+Node: 0.863087
+Node: 0.964599
+Node: 0.1065095
+Node: 0.1167147
+Node: master68335
+Node: Credits68441
+Node: GNU Free Documentation License71140
+Node: Syntax checkers96292
+Node: Function and Variable Index97281
 
 End Tag Table
