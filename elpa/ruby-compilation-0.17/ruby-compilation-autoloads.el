@@ -6,10 +6,10 @@
 ;;;### (autoloads (ruby-compilation-this-test ruby-compilation-cap
 ;;;;;;  pcomplete/cap ruby-compilation-rake pcomplete/rake ruby-compilation-this-buffer
 ;;;;;;  ruby-compilation-run) "ruby-compilation" "ruby-compilation.el"
-;;;;;;  (20822 41190 0 0))
+;;;;;;  (20886 60676 0 0))
 ;;; Generated autoloads from ruby-compilation.el
 
-(eval-after-load 'ruby-mode '(progn (define-key ruby-mode-map (kbd "C-x t") 'ruby-compilation-this-buffer) (define-key ruby-mode-map (kbd "C-x C-t") 'ruby-compilation-this-test)))
+(eval-after-load 'ruby-mode '(progn (define-key ruby-mode-map (kbd "C-x t") 'ruby-compilation-this-buffer) (define-key ruby-mode-map (kbd "C-x T") 'ruby-compilation-this-test)))
 
 (autoload 'ruby-compilation-run "ruby-compilation" "\
 Run CMD using `ruby-compilation-executable' in a ruby compilation buffer.
@@ -59,8 +59,8 @@ Run the test at point through Ruby compilation.
 
 ;;;***
 
-;;;### (autoloads nil nil ("ruby-compilation-pkg.el") (20822 41190
-;;;;;;  291763 0))
+;;;### (autoloads nil nil ("ruby-compilation-pkg.el") (20886 60676
+;;;;;;  17757 0))
 
 ;;;***
 
