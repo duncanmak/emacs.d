@@ -294,9 +294,9 @@
           (lambda ()
             (subword-mode +1)
             (setq indent-tabs-mode nil
-                  tab-width        2
-                  py-indent-offset 2
-                  python-indent    2)))
+                  tab-width        4
+                  py-indent-offset 4
+                  python-indent    4)))
 
 ;;; C#
 (add-hook 'csharp-mode-hook
