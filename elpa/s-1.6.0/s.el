@@ -3,7 +3,7 @@
 ;; Copyright (C) 2012 Magnar Sveen
 
 ;; Author: Magnar Sveen <magnars@gmail.com>
-;; Version: 1.5.0
+;; Version: 1.6.0
 ;; Keywords: strings
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -165,6 +165,18 @@ This is a simple wrapper around the built-in `split-string'."
      (make-string (ceiling extra 2) ? )
      s
      (make-string (floor extra 2) ? ))))
+
+(defun s-pad-left (len padding s)
+  "If S is shorter than LEN, pad it with PADDING on the left."
+  (let ((extra (max 0 (- len (length s)))))
+    (concat (make-string extra (string-to-char padding))
+            s)))
+
+(defun s-pad-right (len padding s)
+  "If S is shorter than LEN, pad it with PADDING on the left."
+  (let ((extra (max 0 (- len (length s)))))
+    (concat s
+            (make-string extra (string-to-char padding)))))
 
 (defun s-left (len s)
   "Returns up to the LEN first chars of S."
@@ -478,7 +490,9 @@ transformation."
                               (funcall replacer var extra)
                             (funcall replacer var))))))
                    (if v v (signal 's-format-resolve md)))
-               (set-match-data replacer-match-data)))) template)
+               (set-match-data replacer-match-data)))) template
+               ;; Need literal to make sure it works
+               t t)
       (set-match-data saved-match-data))))
 
 (defvar s-lex-value-as-lisp nil
