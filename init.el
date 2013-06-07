@@ -293,8 +293,8 @@
 (add-hook 'python-mode-hook
           (lambda ()
             (subword-mode +1)
-            (setq indent-tabs-mode nil
-                  tab-width        4
+            (set-variable 'indent-tabs-mode nil)
+            (setq tab-width        4
                   py-indent-offset 4
                   python-indent    4)))
 
