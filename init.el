@@ -440,7 +440,6 @@
  '(custom-safe-themes (quote ("64c1dadc18501f028b1008a03f315f609d7d29a888e08993c192c07b9c4babc2" "21d9280256d9d3cf79cbcf62c3e7f3f243209e6251b215aede5026e0c5ad853f" default)))
  '(global-undo-tree-mode t)
  '(ibuffer-display-summary nil)
- '(ibuffer-expert t)
  '(ibuffer-show-empty-filter-groups nil)
  '(indicate-empty-lines t)
  '(inhibit-startup-screen t)
