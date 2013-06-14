@@ -281,6 +281,7 @@
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 (add-hook 'js-mode-hook
           (lambda ()
+            (subword-mode)
             (electric-indent-mode +1)
             (electric-pair-mode +1)))
 (add-hook 'after-init-hook
