@@ -438,6 +438,7 @@
  '(confirm-kill-emacs (quote y-or-n-p))
  '(custom-enabled-themes (quote (tango-dark)))
  '(custom-safe-themes (quote ("64c1dadc18501f028b1008a03f315f609d7d29a888e08993c192c07b9c4babc2" "21d9280256d9d3cf79cbcf62c3e7f3f243209e6251b215aede5026e0c5ad853f" default)))
+ '(flycheck-highlighting-mode (quote lines))
  '(global-undo-tree-mode t)
  '(ibuffer-display-summary nil)
  '(ibuffer-show-empty-filter-groups nil)
