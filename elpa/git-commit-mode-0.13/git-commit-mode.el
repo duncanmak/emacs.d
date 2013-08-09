@@ -7,7 +7,7 @@
 ;;      Florian Ragwitz <rafl@debian.org>
 ;; Maintainer: Sebastian Wiesner <lunaryorn@gmail.com>
 ;; URL: https://github.com/lunaryorn/git-modes
-;; Version: 0.12
+;; Version: 0.13
 ;; Keywords: convenience vc git
 
 ;; This file is not part of GNU Emacs.
@@ -285,7 +285,7 @@ before any trailing comments git or the user might have
 inserted."
   (save-excursion
     (goto-char (point-max))
-    (if (not (re-search-backward "^\\S<+$" nil t))
+    (if (not (re-search-backward "^\\S<.+$" nil t))
 	;; no comment lines anywhere before end-of-buffer, so we
 	;; want to insert right there
 	(point-max)
@@ -433,13 +433,6 @@ Do not use this expression directly, instead call
 `git-commit-find-summary-regexp' to create a regular expression
 to match the summary line.")
 
-(eval-after-load 'magit
-  ;; Configure regexp to skip Magit header
-  '(setq git-commit-skip-magit-header-regexp
-        (format
-         "\\(?:\\(?:[A-Za-z0-9-_]+: *.*\n\\)*%s\\)?"
-         (regexp-quote magit-log-header-end))))
-
 (defun git-commit-find-summary-regexp ()
   "Create a regular expression to find the Git summary line.
 
@@ -488,8 +481,6 @@ Known comment headings are provided by `git-commit-comment-headings'."
      ("^\\s<\t\\(?:\\([^:]+\\):\\s-+\\)?\\(.*\\)$"
       (1 'git-commit-comment-action-face t t)
       (2 'git-commit-comment-file-face t))
-     (,git-commit-skip-magit-header-regexp
-      (0 'git-commit-skip-magit-header-face))
      (,(concat "^\\("
                (regexp-opt git-commit-known-pseudo-headers)
                ":\\)\\(\s.*\\)$")
@@ -577,13 +568,27 @@ basic structure of and errors in git commit messages."
 ;; Overwrite magit-log-edit-mode to derive from git-commit-mode, and change it's
 ;; key bindings to use our commit and header insertion bindings
 (eval-after-load 'magit
-  #'(progn
-      (define-derived-mode magit-log-edit-mode git-commit-mode "Magit Log Edit"
-        (set (make-local-variable 'git-commit-commit-function)
-             (apply-partially #'call-interactively 'magit-log-edit-commit)))
+  '(progn
+     (setq git-commit-skip-magit-header-regexp
+           (format
+            "\\(?:\\(?:[A-Za-z0-9-_]+: *.*\n\\)*%s\\)?"
+            (regexp-quote magit-log-header-end)))
+
+     (defvar git-commit-magit-font-lock-keywords
+       `((,git-commit-skip-magit-header-regexp
+          (0 'git-commit-skip-magit-header-face)))
+       "Font lock keywords for Magit Log Edit Mode.")
+
+     (define-derived-mode magit-log-edit-mode git-commit-mode "Magit Log Edit"
+       (font-lock-add-keywords nil git-commit-magit-font-lock-keywords)
+       (set (make-local-variable 'git-commit-commit-function)
+            (apply-partially #'call-interactively 'magit-log-edit-commit)))
       (substitute-key-definition 'magit-log-edit-toggle-signoff
                                  'git-commit-signoff
-                                 magit-log-edit-mode-map)))
+                                 magit-log-edit-mode-map)
+      (substitute-key-definition 'magit-log-edit-commit
+                                 'git-commit-commit
+                                  magit-log-edit-mode-map)))
 
 ;;;###autoload
 (dolist (pattern '("/COMMIT_EDITMSG\\'" "/NOTES_EDITMSG\\'"
