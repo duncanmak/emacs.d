@@ -7,7 +7,7 @@
 ;;         Sam Aaron <samaaron@gmail.com>
 ;; URL: https://github.com/purcell/ac-nrepl
 ;; Keywords: languages, clojure, nrepl
-;; Version: 0.18
+;; Version: 0.20
 ;; Package-Requires: ((nrepl "0.1") (auto-complete "1.4"))
 
 ;; This program is free software; you can redistribute it and/or
@@ -144,12 +144,17 @@ Result is a plist, as returned from `nrepl-send-string-sync'."
 
 (defun ac-nrepl-candidates-java-methods ()
   "Return java method candidates."
-  (ac-nrepl-candidates*
-   (ac-nrepl-filtered-clj
-    "(for [class (vals (ns-imports *ns*))
-           method (.getMethods class)
-           :when (not (java.lang.reflect.Modifier/isStatic (.getModifiers method)))]
-       (str \".\" (.getName method) \" [\"(.getName class)\"]\"))")))
+  (mapcar (lambda (hit)
+            (let* ((parts (split-string hit "#"))
+                   (meth (nth 0 parts))
+                   (classname (nth 1 parts)))
+              (propertize meth 'summary classname)))
+          (ac-nrepl-candidates*
+           (ac-nrepl-filtered-clj
+            "(for [class (vals (ns-imports *ns*))
+                   method (.getMethods class)
+                   :when (not (java.lang.reflect.Modifier/isStatic (.getModifiers method)))]
+               (str \".\" (.getName method) \"#\" (.getName class)))"))))
 
 (defun ac-nrepl-candidates-static-methods ()
   "Return static method candidates."
@@ -167,18 +172,21 @@ Result is a plist, as returned from `nrepl-send-string-sync'."
 
 (defun ac-nrepl-documentation (symbol)
   "Return documentation for the given SYMBOL, if available."
-  (let ((doc
-         (substring-no-properties
-          (replace-regexp-in-string
-           "\r" ""
-           (replace-regexp-in-string
-            "^\\(  \\|-------------------------\r?\n\\)" ""
-            (plist-get (ac-nrepl-sync-eval
-                        (format "(try (eval '(clojure.repl/doc %s))
-                               (catch Exception e (println \"\")))" symbol))
-                       :stdout))))))
-    (unless (string-match "\\`[ \t\n]*\\'" doc)
-      doc)))
+  (let ((raw-doc (plist-get (ac-nrepl-sync-eval
+                             (format "(try (eval '(clojure.repl/doc %s))
+                                        (catch Exception e nil))"
+                                     symbol))
+                            :stdout)))
+    (when raw-doc
+      (let ((doc
+             (substring-no-properties
+              (replace-regexp-in-string
+               "\r" ""
+               (replace-regexp-in-string
+                "^\\(  \\|-------------------------\r?\n\\)" ""
+                raw-doc)))))
+        (unless (string-match "\\`[ \t\n]*\\'" doc)
+          doc)))))
 
 (defun ac-nrepl-symbol-start-pos ()
   "Find the starting position of the symbol at point, unless inside a string."
@@ -239,18 +247,11 @@ Result is a plist, as returned from `nrepl-send-string-sync'."
    ac-nrepl-source-defaults)
   "Auto-complete source for nrepl all class completion.")
 
-(defun ac-nrepl-delete-java-class-hint ()
-  "Remove the java class hint at point."
-  (let ((beg (point)))
-    (search-backward " [")
-    (delete-region beg (point))))
-
 ;;;###autoload
 (defvar ac-source-nrepl-java-methods
   (append
    '((candidates . ac-nrepl-candidates-java-methods)
-     (symbol . "m")
-     (action . ac-nrepl-delete-java-class-hint))
+     (symbol . "m"))
    ac-nrepl-source-defaults)
   "Auto-complete source for nrepl java method completion.")
 
@@ -278,11 +279,13 @@ This affects only the current buffer."
 (defun ac-nrepl-popup-doc ()
   "A popup alternative to `nrepl-doc'."
   (interactive)
-  (popup-tip (ac-nrepl-documentation (symbol-at-point))
-             :point (ac-nrepl-symbol-start-pos)
-             :around t
-             :scroll-bar t
-             :margin t))
+  (let ((doc (ac-nrepl-documentation (symbol-at-point))))
+    (when doc
+     (popup-tip doc
+                :point (ac-nrepl-symbol-start-pos)
+                :around t
+                :scroll-bar t
+                :margin t))))
 
 (provide 'ac-nrepl)
 

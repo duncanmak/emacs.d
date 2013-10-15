@@ -4,7 +4,7 @@
 
 
 ;;;### (autoloads (ac-nrepl-popup-doc ac-nrepl-setup) "ac-nrepl"
-;;;;;;  "ac-nrepl.el" (20910 28434 0 0))
+;;;;;;  "ac-nrepl.el" (21085 52826 0 0))
 ;;; Generated autoloads from ac-nrepl.el
 
 (add-hook 'nrepl-connected-hook 'ac-nrepl-refresh-class-cache t)
@@ -30,7 +30,7 @@ Auto-complete source for nrepl ns-specific class completion.")
 (defvar ac-source-nrepl-all-classes (append '((candidates . ac-nrepl-candidates-all-classes) (symbol . "c")) ac-nrepl-source-defaults) "\
 Auto-complete source for nrepl all class completion.")
 
-(defvar ac-source-nrepl-java-methods (append '((candidates . ac-nrepl-candidates-java-methods) (symbol . "m") (action . ac-nrepl-delete-java-class-hint)) ac-nrepl-source-defaults) "\
+(defvar ac-source-nrepl-java-methods (append '((candidates . ac-nrepl-candidates-java-methods) (symbol . "m")) ac-nrepl-source-defaults) "\
 Auto-complete source for nrepl java method completion.")
 
 (defvar ac-source-nrepl-static-methods (append '((candidates . ac-nrepl-candidates-static-methods) (symbol . "s")) ac-nrepl-source-defaults) "\
@@ -49,7 +49,7 @@ A popup alternative to `nrepl-doc'.
 
 ;;;***
 
-;;;### (autoloads nil nil ("ac-nrepl-pkg.el") (20910 28434 897906
+;;;### (autoloads nil nil ("ac-nrepl-pkg.el") (21085 52826 800755
 ;;;;;;  0))
 
 ;;;***
