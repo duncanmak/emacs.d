@@ -447,6 +447,7 @@
  '(iswitchb-mode t)
  '(iswitchb-use-virtual-buffers t nil (recentf))
  '(js2-auto-indent-p t)
+ '(js2-basic-offset 4)
  '(js2-cleanup-whitespace t)
  '(js2-mirror-mode t)
  '(nxml-child-indent 4)
