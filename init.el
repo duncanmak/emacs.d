@@ -84,6 +84,9 @@
 ;;; flycheck
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
+;;; company-mode
+(add-hook 'after-init-hook 'global-company-mode)
+
 ;;; shell
 (defun comint-delchar-or-eof-or-kill-buffer (arg)
   (interactive "p")
@@ -314,6 +317,7 @@
   (electric-pair-mode -1)
   (electric-indent-mode -1)
   (require 'rvm)
+  (rvm-use-default)
   (ad-activate 'run-ruby)
   )
 
