@@ -366,6 +366,11 @@
 (require 'gitty)
 (gitty-mode)
 
+
+;;; powerline
+(require 'powerline)
+(powerline-center-theme)
+
 ;;
 ;; Setup for ediff.
 ;;
