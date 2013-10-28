@@ -263,21 +263,42 @@
 (add-hook 'java-mode-hook 'c-hook)
 
 ;;; typescript
+
+(setenv "NODE_NO_READLINE" "1")
+(setq inferior-js-program-command "node")
+(setq inferior-js-mode-hook
+      (lambda ()
+        ;; We like nice colors
+        (ansi-color-for-comint-mode-on)
+        ;; Deal with some prompt nonsense
+        (add-to-list
+         'comint-preoutput-filter-functions
+         (lambda (output)
+           (replace-regexp-in-string "\033\\[[0-9]+[GK]" "" output)
+           (replace-regexp-in-string ".*1G.*3G" "&GT;" output)
+           (replace-regexp-in-string "&GT;" "> " output)))))
+
 (require 'typescript)
 (add-to-list 'auto-mode-alist '("\\.ts$" . typescript-mode))
 
 ;;; javascript
 (autoload 'js2-mode "js2-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-(add-hook 'js-mode-hook
+(add-hook 'js2-mode-hook
           (lambda ()
             (subword-mode)
             (electric-indent-mode +1)
-            (electric-pair-mode +1)))
-(add-hook 'after-init-hook
-          #'(lambda ()
-              (when (locate-library "slime-js")
-                (require 'setup-slime-js))))
+            (electric-pair-mode +1)
+            (local-set-key (kbd "C-c C-c") #'js-send-buffer)
+            (local-set-key (kbd "C-c C-r") #'js-send-region)
+            (local-set-key (kbd "C-c C-s") #'js-send-last-sexp)
+            (local-set-key (kbd "C-c C-z") #'run-js)))
+
+;; (add-hook 'after-init-hook
+;;           #'(lambda ()
+;;               (when (locate-library "slime-js")
+;;                 (require 'setup-slime-js))))
+
 
 ;;; Python
 
@@ -298,8 +319,8 @@
 ;;; Coffeescript
 (add-hook 'coffee-mode-hook
           (function (lambda ()
-                      (imenu-add-menubar-index)
                       (setenv "NODE_NO_READLINE" "1")
+                      (imenu-add-menubar-index)
                       (make-local-variable 'tab-width)
                       (set 'tab-width 2)
                       (subword-mode t)
