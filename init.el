@@ -27,7 +27,6 @@
              '("marmalade" . "http://marmalade-repo.org/packages/"))
 
 (server-start)
-(load-theme 'tango-dark t)
 (desktop-save-mode 1)
 (setq-default indent-tabs-mode nil)
 (emacs-lock-mode 'kill)
@@ -448,6 +447,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ansi-color-names-vector ["#212526" "#ff4b4b" "#b4fa70" "#fce94f" "#729fcf" "#ad7fa8" "#8cc4ff" "#eeeeec"])
  '(blink-cursor-mode nil)
  '(browse-kill-ring-quit-action (quote save-and-restore))
  '(c-basic-offset 8)
@@ -455,8 +455,8 @@
  '(column-number-mode t)
  '(comint-process-echoes t)
  '(confirm-kill-emacs (quote y-or-n-p))
- '(custom-enabled-themes (quote (tango-dark)))
- '(custom-safe-themes (quote ("64c1dadc18501f028b1008a03f315f609d7d29a888e08993c192c07b9c4babc2" "21d9280256d9d3cf79cbcf62c3e7f3f243209e6251b215aede5026e0c5ad853f" default)))
+ '(custom-enabled-themes (quote (wombat)))
+ '(custom-safe-themes (quote ("1e7e097ec8cb1f8c3a912d7e1e0331caeed49fef6cff220be63bd2a6ba4cc365" "30fe7e72186c728bd7c3e1b8d67bc10b846119c45a0f35c972ed427c45bacc19" "fc5fcb6f1f1c1bc01305694c59a1a861b008c534cae8d0e48e4d5e81ad718bc6" "64c1dadc18501f028b1008a03f315f609d7d29a888e08993c192c07b9c4babc2" "21d9280256d9d3cf79cbcf62c3e7f3f243209e6251b215aede5026e0c5ad853f" default)))
  '(flycheck-highlighting-mode (quote lines))
  '(global-undo-tree-mode t)
  '(ibuffer-display-summary nil)
