@@ -301,14 +301,17 @@
           (function (lambda ()
                       (imenu-add-menubar-index)
                       (setenv "NODE_NO_READLINE" "1")
-                      (set (make-local-variable 'tab-width) 2)
+                      (make-local-variable 'tab-width)
+                      (set 'tab-width 2)
                       (subword-mode t)
+                      (electric-indent-mode -1)
                       )))
 
 ;;; Ruby
 (require 'ruby-mode)
 (defun ruby-hook ()
   (require 'rinari)
+  (robe-mode)
   (rinari-launch)
   (add-to-list 'load-path "ruby-debug-extra/emacs")
   (require 'rdebug)
@@ -330,6 +333,13 @@
 (add-to-list 'auto-mode-alist '("Rakefile" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.rake$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
+
+;; (add-hook 'inf-ruby-mode-hook
+;;           (lambda ()
+;;             (require 'inf-ruby-company)
+;;             (setq company-idle-delay 0.1)
+;;             (setq company-minimum-prefix-length 2)))
+
 
 ;;; Scala
 (add-to-list 'load-path "ensime/elisp/")
@@ -441,6 +451,7 @@
  '(blink-cursor-mode nil)
  '(browse-kill-ring-quit-action (quote save-and-restore))
  '(c-basic-offset 8)
+ '(coffee-tab-width 4)
  '(column-number-mode t)
  '(comint-process-echoes t)
  '(confirm-kill-emacs (quote y-or-n-p))
