@@ -213,7 +213,7 @@
      ))
 
 (delete-selection-mode t)
-(show-paren-mode t)
+(show-smartparen-mode t)
 
 ;;; html
 (eval-after-load "sgml-mode"
