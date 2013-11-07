@@ -25,3 +25,6 @@
 [submodule "site-lisp/lockstep"]
 	path = site-lisp/lockstep
 	url = https://github.com/tjim/lockstep.git
+[submodule "site-lisp/emacs-pry"]
+	path = site-lisp/emacs-pry
+	url = https://github.com/jacott/emacs-pry.git
