@@ -15,6 +15,7 @@
 
 ;; Also auto refresh dired, but be quiet about it
 (require 'dired)
+(require 'dired-x)
 (setq global-auto-revert-non-file-buffers t)
 (setq auto-revert-verbose nil)
 
@@ -213,7 +214,7 @@
      ))
 
 (delete-selection-mode t)
-(show-smartparen-mode t)
+(show-paren-mode t)
 
 ;;; html
 (eval-after-load "sgml-mode"
@@ -342,6 +343,7 @@
   (require 'rvm)
   (rvm-use-default)
   (ad-activate 'run-ruby)
+  (require 'pry)
   )
 
 (defadvice run-ruby (after rvm-run-ruby-advice)
