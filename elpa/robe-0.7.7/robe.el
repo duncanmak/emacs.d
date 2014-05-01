@@ -5,7 +5,7 @@
 
 ;; Author: Dmitry Gutov
 ;; URL: https://github.com/dgutov/robe
-;; Version: 0.7.6
+;; Version: 0.7.7
 ;; Keywords: ruby convenience rails
 ;; Package-Requires: ((inf-ruby "2.3.0"))
 
@@ -58,6 +58,7 @@
 (require 'eldoc)
 (require 'help-mode)
 (require 'ruby-mode)
+(require 'ansi-color)
 
 (defgroup robe nil
   "Code navigation, documentation lookup and completion for Ruby"
@@ -67,6 +68,10 @@
 (defcustom robe-highlight-capf-candidates (version< "24.3.50" emacs-version)
   "When non-nil, `completion-at-point' candidates buffer will
 have constants, methods and arguments highlighted in color."
+  :group 'robe)
+
+(defcustom robe-turn-on-eldoc t
+  "When non-nil, `robe-mode' will turn on `eldoc-mode'."
   :group 'robe)
 
 (defvar robe-ruby-path
@@ -80,6 +85,16 @@ have constants, methods and arguments highlighted in color."
 
 (defvar robe-running nil)
 
+(defcustom robe-completing-read-func 'ido-completing-read
+  "Function to call for completing read."
+  :type '(choice (const :tag "Ido" ido-completing-read)
+                 (const :tag "Plain" completing-read)
+                 (function :tag "Other function"))
+  :group 'robe)
+
+(defun robe-completing-read (&rest args)
+  (apply robe-completing-read-func args))
+
 (defun robe-start (&optional arg)
   "Start Robe server if it isn't already running."
   (interactive "p")
@@ -92,11 +107,15 @@ have constants, methods and arguments highlighted in color."
       (error "Aborted")))
   (when (or arg (not robe-running))
     (let* ((proc (inf-ruby-proc))
-           started
+           started failed
            (comint-filter (process-filter proc))
            (tmp-filter (lambda (p s)
-                         (when (string-match-p "=> \"robe on\"" s)
+                         (cond
+                          ((string-match-p "\"robe on\""
+                                           (ansi-color-filter-apply s))
                            (setq started t))
+                          ((string-match-p "Error" s)
+                           (setq failed t)))
                          (funcall comint-filter p s)))
            (script (format (mapconcat #'identity
                                       '("unless defined? Robe"
@@ -111,9 +130,10 @@ have constants, methods and arguments highlighted in color."
             (set-process-filter proc tmp-filter)
             (comint-send-string proc script)
             (while (not started)
-              (unless (process-live-p proc)
+              (unless (process-live-p proc) (setq failed t))
+              (when failed
                 (ruby-switch-to-inf t)
-                (error "Ruby process died"))
+                (error "Robe launch failed"))
               (accept-process-output proc)))
         (set-process-filter proc comint-filter)))
     (when (robe-request "ping") ;; Should be always t when no error, though.
@@ -157,11 +177,11 @@ have constants, methods and arguments highlighted in color."
 
 (defun robe-ask-prompt ()
   (let* ((modules (robe-request "modules"))
-         (module (ido-completing-read "Module: " modules))
+         (module (robe-completing-read "Module: " modules))
          (targets (robe-request "targets" module))
          (_ (unless targets (error "No methods found")))
          (alist (robe-decorate-methods (cdr targets))))
-    (cdr (assoc (ido-completing-read "Method: " alist nil t)
+    (cdr (assoc (robe-completing-read "Method: " alist nil t)
                 alist))))
 
 (defun robe-decorate-methods (list)
@@ -193,7 +213,7 @@ If invoked with a prefix or no symbol at point, delegate to `robe-ask'."
     (unless alist (error "Method not found"))
     (if (= 1 (length alist))
         (cdar alist)
-      (cdr (assoc (ido-completing-read "Module: " alist nil t)
+      (cdr (assoc (robe-completing-read "Module: " alist nil t)
                   alist)))))
 
 (defun robe-jump-modules (thing)
@@ -243,13 +263,13 @@ If invoked with a prefix or no symbol at point, delegate to `robe-ask'."
 
 (defun robe-jump-to-module (name)
   "Prompt for module, jump to a file where it has method definitions."
-  (interactive `(,(ido-completing-read "Module: " (robe-request "modules"))))
+  (interactive `(,(robe-completing-read "Module: " (robe-request "modules"))))
   (let ((paths (robe-request "class_locations" name (car (robe-context)))))
     (when (null paths) (error "Can't find the location"))
     (let ((file (if (= (length paths) 1)
                     (car paths)
                   (let ((alist (robe-to-abbr-paths paths)))
-                    (cdr (assoc (ido-completing-read "File: " alist nil t)
+                    (cdr (assoc (robe-completing-read "File: " alist nil t)
                                 alist))))))
       (robe-find-file file)
       (goto-char (point-min))
@@ -636,12 +656,17 @@ Only works with Rails, see e.g. `rinari-console'."
 
 ;;;###autoload
 (define-minor-mode robe-mode
-  "Improved navigation for Ruby"
+  "Improved navigation for Ruby.
+
+The following commands are available:
+
+\\{robe-mode-map}"
   nil " robe" robe-mode-map
   (add-hook 'completion-at-point-functions 'robe-complete-at-point nil t)
-  (set (make-local-variable 'eldoc-documentation-function) 'robe-eldoc)
-  (eldoc-add-command 'robe-complete-thing)
-  (turn-on-eldoc-mode))
+  (when robe-turn-on-eldoc
+    (set (make-local-variable 'eldoc-documentation-function) 'robe-eldoc)
+    (eldoc-add-command 'robe-complete-thing)
+    (turn-on-eldoc-mode)))
 
 (provide 'robe)
 ;;; robe.el ends here
