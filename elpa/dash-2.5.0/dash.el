@@ -3,7 +3,7 @@
 ;; Copyright (C) 2012 Magnar Sveen
 
 ;; Author: Magnar Sveen <magnars@gmail.com>
-;; Version: 2.3.0
+;; Version: 2.5.0
 ;; Keywords: lists
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -26,6 +26,23 @@
 ;; See documentation on https://github.com/magnars/dash.el#functions
 
 ;;; Code:
+
+(defgroup dash ()
+  "Customize group for dash.el"
+  :group 'lisp
+  :prefix "dash-")
+
+(defun dash--enable-fontlock (symbol value)
+  (when value
+    (dash-enable-font-lock))
+  (set-default symbol value))
+
+(defcustom dash-enable-fontlock nil
+  "If non-nil, enable fontification of dash functions, macros and
+special values."
+  :type 'boolean
+  :set 'dash--enable-fontlock
+  :group 'dash)
 
 (defmacro !cons (car cdr)
   "Destructive: Sets CDR to the cons of CAR and CDR."
@@ -263,17 +280,15 @@ Thus function FN should return a list."
 The last 2 members of ARGS are used as the final cons of the
 result so if the final member of ARGS is not a list the result is
 a dotted list."
-  (let (res)
-    (--each
-        args
-      (cond
-       ((not res)
-        (setq res it))
-       ((consp res)
-        (setcdr res (cons (cdr res) it)))
-       (t
-        (setq res (cons res it)))))
-    res))
+  (-reduce-r 'cons args))
+
+(defun -snoc (list elem &rest elements)
+  "Append ELEM to the end of the list.
+
+This is like `cons', but operates on the end of list.
+
+If ELEMENTS is non nil, append these to the list as well."
+  (-concat list (list elem) elements))
 
 (defmacro --first (form list)
   "Anaphoric form of `-first'."
@@ -468,6 +483,38 @@ The time complexity is O(n)."
   "Returns a list with X inserted into LIST at position N."
   (let ((split-list (-split-at n list)))
     (nconc (car split-list) (cons x (cadr split-list)))))
+
+(defun -replace-at (n x list)
+  "Return a list with element at Nth position in LIST replaced with X."
+  (let ((split-list (-split-at n list)))
+    (nconc (car split-list) (cons x (cdr (cadr split-list))))))
+
+(defun -update-at (n func list)
+  "Return a list with element at Nth position in LIST replaced with `(func (nth n list))`."
+  (let ((split-list (-split-at n list)))
+    (nconc (car split-list) (cons (funcall func (car (cadr split-list))) (cdr (cadr split-list))))))
+
+(defmacro --update-at (n form list)
+  "Anaphoric version of `-update-at'."
+  `(-update-at ,n (lambda (it) ,form) ,list))
+
+(defun -remove-at (n list)
+  "Return a list with element at Nth position in LIST removed."
+  (-remove-at-indices (list n) list))
+
+(defun -remove-at-indices (indices list)
+  "Return a list whose elements are elements from LIST without
+elements selected as `(nth i list)` for all i
+from INDICES."
+  (let* ((indices (-sort '< indices))
+         (diffs (cons (car indices) (-map '1- (-zip-with '- (cdr indices) indices))))
+         r)
+    (--each diffs
+      (let ((split (-split-at it list)))
+        (!cons (car split) r)
+        (setq list (cdr (cadr split)))))
+    (!cons list r)
+    (apply '-concat (nreverse r))))
 
 (defmacro --split-with (pred list)
   "Anaphoric form of `-split-with'."
@@ -736,26 +783,6 @@ as `(nth i list)` for all i from INDICES."
       (!cons (nth it list) r))
     (nreverse r)))
 
-(defun -grade-up (comparator list)
-  "Grades elements of LIST using COMPARATOR relation, yielding a
-permutation vector such that applying this permutation to LIST
-sorts it in ascending order."
-  ;; ugly hack to "fix" lack of lexical scope
-  (let ((comp `(lambda (it other) (funcall ',comparator (car it) (car other)))))
-    (->> (--map-indexed (cons it it-index) list)
-      (-sort comp)
-      (-map 'cdr))))
-
-(defun -grade-down (comparator list)
-  "Grades elements of LIST using COMPARATOR relation, yielding a
-permutation vector such that applying this permutation to LIST
-sorts it in descending order."
-  ;; ugly hack to "fix" lack of lexical scope
-  (let ((comp `(lambda (it other) (funcall ',comparator (car other) (car it)))))
-    (->> (--map-indexed (cons it it-index) list)
-      (-sort comp)
-      (-map 'cdr))))
-
 (defmacro -> (x &optional form &rest more)
   "Threads the expr through the forms. Inserts X as the second
 item in the first form, making a list of it if it is not a list
@@ -793,6 +820,26 @@ in in second form, etc."
 (put '-> 'lisp-indent-function 1)
 (put '->> 'lisp-indent-function 1)
 (put '--> 'lisp-indent-function 1)
+
+(defun -grade-up (comparator list)
+  "Grades elements of LIST using COMPARATOR relation, yielding a
+permutation vector such that applying this permutation to LIST
+sorts it in ascending order."
+  ;; ugly hack to "fix" lack of lexical scope
+  (let ((comp `(lambda (it other) (funcall ',comparator (car it) (car other)))))
+    (->> (--map-indexed (cons it it-index) list)
+      (-sort comp)
+      (-map 'cdr))))
+
+(defun -grade-down (comparator list)
+  "Grades elements of LIST using COMPARATOR relation, yielding a
+permutation vector such that applying this permutation to LIST
+sorts it in descending order."
+  ;; ugly hack to "fix" lack of lexical scope
+  (let ((comp `(lambda (it other) (funcall ',comparator (car other) (car it)))))
+    (->> (--map-indexed (cons it it-index) list)
+      (-sort comp)
+      (-map 'cdr))))
 
 (defmacro -when-let (var-val &rest body)
   "If VAL evaluates to non-nil, bind it to VAR and execute body.
@@ -916,6 +963,18 @@ or with `-compare-fn' if that's non-nil."
         lst))))))
 
 (defalias '-contains-p '-contains?)
+
+(defun -same-items? (list list2)
+  "Return true if LIST and LIST2 has the same items.
+
+The order of the elements in the lists does not matter."
+  (let ((length-a (length list))
+        (length-b (length list2)))
+    (and
+     (= length-a length-b)
+     (= length-a (length (-intersection list list2))))))
+
+(defalias '-same-items-p '-same-items?)
 
 (defun -sort (comparator list)
   "Sort LIST, stably, comparing elements using COMPARATOR.
@@ -1107,98 +1166,111 @@ structure such as plist or alist."
   (eval-after-load "lisp-mode"
     '(progn
        (let ((new-keywords '(
-                             "--each"
                              "-each"
-                             "--each-while"
+                             "--each"
                              "-each-while"
-                             "--dotimes"
+                             "--each-while"
                              "-dotimes"
+                             "--dotimes"
                              "-map"
                              "--map"
-                             "--reduce-from"
                              "-reduce-from"
-                             "--reduce"
+                             "--reduce-from"
                              "-reduce"
-                             "--reduce-r-from"
+                             "--reduce"
                              "-reduce-r-from"
-                             "--reduce-r"
+                             "--reduce-r-from"
                              "-reduce-r"
-                             "--filter"
+                             "--reduce-r"
                              "-filter"
+                             "--filter"
                              "-select"
                              "--select"
-                             "--remove"
                              "-remove"
+                             "--remove"
                              "-reject"
                              "--reject"
-                             "--keep"
                              "-keep"
+                             "--keep"
+                             "-map-indexed"
+                             "--map-indexed"
+                             "-map-when"
+                             "--map-when"
+                             "-replace-where"
+                             "--replace-where"
                              "-flatten"
                              "-concat"
-                             "--mapcat"
                              "-mapcat"
-                             "--first"
+                             "--mapcat"
+                             "-cons*"
+                             "-snoc"
                              "-first"
-                             "--any?"
+                             "--first"
+                             "-last"
+                             "--last"
+                             "-first-item"
+                             "-last-item"
+                             "-count"
+                             "--count"
                              "-any?"
+                             "--any?"
                              "-some?"
                              "--some?"
                              "-any-p"
                              "--any-p"
                              "-some-p"
                              "--some-p"
-                             "--all?"
                              "-all?"
+                             "--all?"
                              "-every?"
                              "--every?"
                              "-all-p"
                              "--all-p"
                              "-every-p"
                              "--every-p"
-                             "--none?"
                              "-none?"
+                             "--none?"
                              "-none-p"
                              "--none-p"
                              "-only-some?"
                              "--only-some?"
                              "-only-some-p"
                              "--only-some-p"
+                             "-slice"
                              "-take"
                              "-drop"
-                             "--take-while"
                              "-take-while"
-                             "--drop-while"
+                             "--take-while"
                              "-drop-while"
+                             "--drop-while"
                              "-split-at"
                              "-rotate"
                              "-insert-at"
-                             "--split-with"
+                             "-replace-at"
+                             "-update-at"
+                             "--update-at"
+                             "-remove-at"
+                             "-remove-at-indices"
                              "-split-with"
-                             "-partition"
+                             "--split-with"
+                             "-separate"
+                             "--separate"
+                             "-partition-all-in-steps"
                              "-partition-in-steps"
                              "-partition-all"
-                             "-partition-all-in-steps"
+                             "-partition"
+                             "-partition-by"
+                             "--partition-by"
+                             "-partition-by-header"
+                             "--partition-by-header"
+                             "-group-by"
+                             "--group-by"
                              "-interpose"
                              "-interleave"
-                             "--zip-with"
                              "-zip-with"
+                             "--zip-with"
                              "-zip"
-                             "--map-indexed"
-                             "-map-indexed"
-                             "--map-when"
-                             "-map-when"
-                             "--replace-where"
-                             "-replace-where"
                              "-partial"
-                             "-rpartial"
-                             "-juxt"
-                             "-applify"
-                             "-on"
-                             "-flip"
-                             "-const"
-                             "-cut"
-                             "-orfn"
-                             "-andfn"
                              "-elem-index"
                              "-elem-indices"
                              "-find-indices"
@@ -1217,22 +1289,27 @@ structure such as plist or alist."
                              "-if-let"
                              "-if-let*"
                              "--if-let"
-                             "-union"
                              "-distinct"
+                             "-uniq"
+                             "-union"
                              "-intersection"
                              "-difference"
                              "-contains?"
                              "-contains-p"
+                             "-same-items?"
+                             "-same-items-p"
+                             "-sort"
+                             "--sort"
                              "-repeat"
-                             "-cons*"
                              "-sum"
                              "-product"
-                             "-min"
-                             "-min-by"
-                             "--min-by"
                              "-max"
+                             "-min"
                              "-max-by"
                              "--max-by"
+                             "-min-by"
+                             "--min-by"
+                             "-cons-pair?"
                              "-cons-to-list"
                              "-value-to-list"
                              "-tree-mapreduce-from"
@@ -1246,6 +1323,15 @@ structure such as plist or alist."
                              "-tree-reduce"
                              "--tree-reduce"
                              "-clone"
+                             "-rpartial"
+                             "-juxt"
+                             "-applify"
+                             "-on"
+                             "-flip"
+                             "-const"
+                             "-cut"
+                             "-orfn"
+                             "-andfn"
                              ))
              (special-variables '(
                                   "it"
