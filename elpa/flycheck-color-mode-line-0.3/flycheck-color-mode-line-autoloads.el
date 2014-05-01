@@ -4,7 +4,7 @@
 
 
 ;;;### (autoloads (flycheck-color-mode-line-mode) "flycheck-color-mode-line"
-;;;;;;  "flycheck-color-mode-line.el" (21100 57437 0 0))
+;;;;;;  "flycheck-color-mode-line.el" (21345 32554 0 0))
 ;;; Generated autoloads from flycheck-color-mode-line.el
 
 (autoload 'flycheck-color-mode-line-mode "flycheck-color-mode-line" "\
@@ -25,8 +25,8 @@ Otherwise behave as if called interactively.
 
 ;;;***
 
-;;;### (autoloads nil nil ("flycheck-color-mode-line-pkg.el") (21100
-;;;;;;  57437 456354 0))
+;;;### (autoloads nil nil ("flycheck-color-mode-line-pkg.el") (21345
+;;;;;;  32554 458017 0))
 
 ;;;***
 
