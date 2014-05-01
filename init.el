@@ -285,6 +285,17 @@
 ;;; javascript
 (autoload 'js2-mode "js2-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+
+(require 'flycheck)
+(flycheck-define-checker javascript-jslint-reporter
+  "A JavaScript syntax and style checker based on JSLint Reporter.
+
+See URL `https://github.com/FND/jslint-reporter'."
+  :command ("~/.emacs.d/site-lisp/jslint-reporter/jslint-reporter" source)
+  :error-patterns
+  ((error line-start (1+ nonl) ":" line ":" column ":" (message) line-end))
+  :modes (js-mode js2-mode js3-mode))
+
 (add-hook 'js2-mode-hook
           (lambda ()
             (subword-mode)
@@ -293,7 +304,9 @@
             (local-set-key (kbd "C-c C-c") #'js-send-buffer)
             (local-set-key (kbd "C-c C-r") #'js-send-region)
             (local-set-key (kbd "C-c C-s") #'js-send-last-sexp)
-            (local-set-key (kbd "C-c C-z") #'run-js)))
+            (local-set-key (kbd "C-c C-z") #'run-js)
+            (flycheck-select-checker 'javascript-jslint-reporter)
+            ))
 
 ;; (add-hook 'after-init-hook
 ;;           #'(lambda ()
