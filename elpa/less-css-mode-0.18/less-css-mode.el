@@ -6,7 +6,7 @@
 ;; Author: Steve Purcell <steve@sanityinc.com>
 ;; URL: https://github.com/purcell/less-css-mode
 ;; Keywords: less css mode
-;; Version: 0.17
+;; Version: 0.18
 ;;
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -21,9 +21,9 @@
 ;;; Commentary:
 ;;
 ;; This mode provides syntax highlighting for LESS CSS files, plus
-;; optional support for `flymake-mode' and compilation of .less files
-;; to .css files at the time they are saved: use
-;; `less-css-compile-at-save' to enable the latter.
+;; optional support for compilation of .less files to .css files at
+;; the time they are saved: use `less-css-compile-at-save' to enable
+;; this.
 ;;
 ;; Command line utility "lessc" is required if setting
 ;; `less-css-compile-at-save' to t.  To install "lessc" using the
@@ -46,6 +46,11 @@
 ;; variables header at the top of your .less file, e.g.:
 ;;
 ;; // -*- less-css-compile-at-save: t; less-css-output-directory: "../css" -*-
+;;
+;; In the case of files which are included in other .less files, you
+;; may want to trigger the compilation of a "master" .less file on
+;; save: you can accomplish this with `less-css-input-file-name',
+;; which is probably best set using directory local variables.
 ;;
 ;; If you don't need CSS output but would like to be warned of any
 ;; syntax errors in your .less source, consider using `flymake-less':
@@ -113,6 +118,25 @@ default.")
 
 (make-variable-buffer-local 'less-css-output-file-name)
 
+(defvar less-css-input-file-name nil
+  "File name which will be compiled to CSS.
+
+When the current buffer is saved `less-css-input-file-name' file will be compiled
+to css instead of the current file.
+
+Set this in order to trigger compilation of a \"master\" .less
+file which includes the current file.  The best way to set this
+variable in most cases is likely to be via directory local
+variables.
+
+This can be also be set to a full path, or a relative path. If
+the path is relative, it will be relative to the the current directory by
+default.
+
+")
+
+(make-variable-buffer-local 'less-css-input-file-name)
+
 (defconst less-css-default-error-regex
   "^\\(?:\e\\[31m\\)?\\([^\e\n]*\\|FileError:.*\n\\)\\(?:\e\\[39m\e\\[31m\\)? in \\(?:\e\\[39m\\)?\\([^ \r\n\t\e]+\\)\\(?:\e\\[90m\\)?\\(?::\\| on line \\)\\([0-9]+\\)\\(?::\\|, column \\)\\([0-9]+\\):?\\(?:\e\\[39m\\)?")
 
@@ -152,7 +176,8 @@ default.")
    (mapconcat 'identity
               (append (list (less-css--maybe-shell-quote-command less-css-lessc-command))
                       less-css-lessc-options
-                      (list (shell-quote-argument buffer-file-name)
+                      (list (shell-quote-argument
+                             (or less-css-input-file-name buffer-file-name))
                             ">"
                             (shell-quote-argument (less-css--output-path))))
               " ")))
