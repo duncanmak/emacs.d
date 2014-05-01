@@ -1,11 +1,11 @@
 ;;; epl.el --- Emacs Package Library -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2013 Sebastian Wiesner
+;; Copyright (C) 2013, 2014 Sebastian Wiesner
 
 ;; Author: Sebastian Wiesner <lunaryorn@gmail.com>
 ;; Maintainer: Johan Andersson <johan.rejeep@gmail.com>
 ;;     Sebastian Wiesner <lunaryorn@gmail.com>
-;; Version: 0.4
+;; Version: 0.7
 ;; Package-Requires: ((cl-lib "0.3"))
 ;; Keywords: convenience
 ;; URL: http://github.com/cask/epl
@@ -94,7 +94,11 @@
 
 ;; `epl-find-upgrades' finds all upgradable packages.
 
+;; `epl-built-in-p' return true if package is built-in to Emacs.
+
 ;;; Package operations
+
+;; `epl-install-file' installs a package file.
 
 ;; `epl-package-install' installs a package.
 
@@ -491,8 +495,12 @@ packages."
                 upgrades))))
     (nreverse upgrades)))
 
+(defalias 'epl-built-in-p 'package-built-in-p)
+
 
 ;;;; Package operations
+
+(defalias 'epl-install-file 'package-install-file)
 
 (defun epl-package-install (package &optional force)
   "Install a PACKAGE.
@@ -527,7 +535,12 @@ PACKAGE is a `epl-package' object to delete."
       (let ((name (symbol-name (epl-package-name package)))
             (version (epl-package-version-string package)))
         (with-no-warnings
-          (package-delete name version))))))
+          (package-delete name version))
+        ;; Legacy package.el does not remove the deleted package
+        ;; from the `package-alist', so we do it manually here.
+        (let ((pkg (assq (epl-package-name package) package-alist)))
+          (when pkg
+            (setq package-alist (delq pkg package-alist))))))))
 
 (defun epl-upgrade (&optional packages preserve-obsolete)
   "Upgrade PACKAGES.
