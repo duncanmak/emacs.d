@@ -4,7 +4,7 @@
 ;;
 ;; Author: Lorenzo Villani <lorenzo@villani.me>
 ;; URL: https://github.com/lvillani/el-monokai-theme
-;; Version: 0.0.10
+;; Version: 0.0.11
 ;;
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -66,6 +66,8 @@
    `(ido-first-match ((t (:foreground ,monokai-purple))))
    `(ido-only-match ((t (:foreground ,monokai-green))))
    `(ido-subdir ((t (:foreground ,monokai-blue-light))))
+   ;; ECB
+   `(ecb-default-highlight-face ((t (:foreground ,monokai-green))))
    ;; Whitespace
    `(whitespace-space ((t (:foreground ,monokai-gray))))
    ;; Yasnippet
@@ -76,7 +78,7 @@
   (add-to-list 'custom-theme-load-path
                (file-name-as-directory (file-name-directory load-file-name)))
   (when (not window-system)
-    (custom-set-faces '(default ((t (:background "nil")))))))
+    (custom-set-faces '(default ((t (:background nil)))))))
 
 (provide-theme 'monokai)
 

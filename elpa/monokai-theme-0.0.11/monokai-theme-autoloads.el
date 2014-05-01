@@ -3,15 +3,15 @@
 ;;; Code:
 
 
-;;;### (autoloads nil "monokai-theme" "monokai-theme.el" (20886 60749
+;;;### (autoloads nil "monokai-theme" "monokai-theme.el" (21345 32534
 ;;;;;;  0 0))
 ;;; Generated autoloads from monokai-theme.el
 
-(when load-file-name (add-to-list 'custom-theme-load-path (file-name-as-directory (file-name-directory load-file-name))) (when (not window-system) (custom-set-faces '(default ((t (:background "nil")))))))
+(when load-file-name (add-to-list 'custom-theme-load-path (file-name-as-directory (file-name-directory load-file-name))) (when (not window-system) (custom-set-faces '(default ((t (:background nil)))))))
 
 ;;;***
 
-;;;### (autoloads nil nil ("monokai-theme-pkg.el") (20886 60749 716775
+;;;### (autoloads nil nil ("monokai-theme-pkg.el") (21345 32534 391360
 ;;;;;;  0))
 
 ;;;***
