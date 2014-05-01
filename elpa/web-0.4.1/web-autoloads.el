@@ -4,7 +4,7 @@
 
 
 ;;;### (autoloads (web-get web-json-post web-http-post web-http-get
-;;;;;;  web-http-call) "web" "web.el" (21021 13335 0 0))
+;;;;;;  web-http-call) "web" "web.el" (21345 32412 0 0))
 ;;; Generated autoloads from web.el
 
 (autoload 'web-http-call "web" "\
@@ -30,6 +30,9 @@ usefully:
 If MIME-TYPE is `application/form-www-url-encoded' then
 `web-to-query-string' is used to to format the DATA into a POST
 body.
+
+If MIME-TYPE is `multipart/form-data' then `web-to-multipart' is
+called to get a POST body.
 
 When the request comes back the CALLBACK is called.  CALLBACK is
 always passed 3 arguments: the HTTP connection which is a process
@@ -92,13 +95,14 @@ so the function may be defined like this:
 HEADERS may be specified, these are treated as extra-headers to
 be sent with the request.
 
-The DATA is sent as `application/x-www-form-urlencoded'.
+The DATA is sent as `application/x-www-form-urlencoded' by
+default, MIME-TYPE can change that.
 
 JSON-ARRAY-TYPE, JSON-OBJECT-TYPE and JSON-KEY-TYPE, if present,
 are used to let bind the `json-read' variables of the same name
 affecting the resulting lisp structure.
 
-\(fn CALLBACK &key URL DATA HEADERS (logging t) (json-array-type json-array-type) (json-object-type json-object-type) (json-key-type json-key-type) (expectation-failure-callback (quote web-json-default-expectation-failure)))" nil nil)
+\(fn CALLBACK &key URL DATA HEADERS (mime-type web/request-mimetype) (logging t) (json-array-type json-array-type) (json-object-type json-object-type) (json-key-type json-key-type) (expectation-failure-callback (quote web-json-default-expectation-failure)))" nil nil)
 
 (autoload 'web-get "web" "\
 Get the specified URL into the BUFFER.
@@ -107,7 +111,7 @@ Get the specified URL into the BUFFER.
 
 ;;;***
 
-;;;### (autoloads nil nil ("web-pkg.el") (21021 13335 285588 0))
+;;;### (autoloads nil nil ("web-pkg.el") (21345 32412 695692 0))
 
 ;;;***
 
