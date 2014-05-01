@@ -3,21 +3,21 @@
 ;;; Code:
 
 
-;;;### (autoloads (puppet-mode) "puppet-mode" "puppet-mode.el" (20365
-;;;;;;  55155))
+;;;### (autoloads (puppet-mode) "puppet-mode" "puppet-mode.el" (21345
+;;;;;;  32438 0 0))
 ;;; Generated autoloads from puppet-mode.el
 
 (autoload 'puppet-mode "puppet-mode" "\
-Major mode for editing puppet manifests.
 
-The variable puppet-indent-level controls the amount of indentation.
-\\{puppet-mode-map}
 
 \(fn)" t nil)
 
+(add-to-list 'auto-mode-alist '("\\.pp\\'" . puppet-mode))
+
 ;;;***
 
-;;;### (autoloads nil nil ("puppet-mode-pkg.el") (20365 55155 741368))
+;;;### (autoloads nil nil ("puppet-mode-pkg.el") (21345 32438 509625
+;;;;;;  0))
 
 ;;;***
 
