@@ -4,7 +4,7 @@
 
 
 ;;;### (autoloads (global-undo-tree-mode undo-tree-mode) "undo-tree"
-;;;;;;  "undo-tree.el" (20678 9090))
+;;;;;;  "undo-tree.el" (21345 32414 0 0))
 ;;; Generated autoloads from undo-tree.el
 
 (autoload 'undo-tree-mode "undo-tree" "\
@@ -23,7 +23,7 @@ The following keys are available in `undo-tree-mode':
 
 Within the undo-tree visualizer, the following keys are available:
 
-  \\{undo-tree-visualizer-map}
+  \\{undo-tree-visualizer-mode-map}
 
 \(fn &optional ARG)" t nil)
 
@@ -50,7 +50,8 @@ See `undo-tree-mode' for more information on Undo-Tree mode.
 
 ;;;***
 
-;;;### (autoloads nil nil ("undo-tree-pkg.el") (20678 9090 242781))
+;;;### (autoloads nil nil ("undo-tree-pkg.el") (21345 32414 222887
+;;;;;;  0))
 
 ;;;***
 
