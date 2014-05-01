@@ -9,7 +9,8 @@
 ;;         Hugo Duncan <hugo@hugoduncan.org>
 ;;         Steve Purcell <steve@sanityinc.com>
 ;; URL: http://www.github.com/clojure-emacs/cider
-;; Version: 0.3.1
+;; Version: 0.5.0
+;; Package-Requires: ((clojure-mode "2.0.0") (cl-lib "0.3") (dash "2.4.1") (pkg-info "0.4"))
 ;; Keywords: languages, clojure, cider
 
 ;; This program is free software: you can redistribute it and/or modify
@@ -56,14 +57,12 @@
   :prefix "cider-"
   :group 'applications)
 
-(require 'nrepl-client)
+(require 'cider-client)
 (require 'cider-version)
 (require 'cider-interaction)
 (require 'cider-eldoc)
 (require 'cider-repl)
-(require 'cider-repl-mode)
 (require 'cider-mode)
-(require 'cider-macroexpansion)
 
 ;;;###autoload
 (defun cider-jack-in (&optional prompt-project)
@@ -72,10 +71,10 @@ If PROMPT-PROJECT is t, then prompt for the project for which to
 start the server."
   (interactive "P")
   (setq cider-current-clojure-buffer (current-buffer))
-  (lexical-let* ((project (when prompt-project
-                            (ido-read-directory-name "Project: ")))
-                 (project-dir (nrepl-project-directory-for
-                               (or project (nrepl-current-dir)))))
+  (let* ((project (when prompt-project
+                    (ido-read-directory-name "Project: ")))
+         (project-dir (nrepl-project-directory-for
+                       (or project (nrepl-current-dir)))))
     (when (nrepl-check-for-repl-buffer nil project-dir)
       (let* ((nrepl-project-dir project-dir)
              (cmd (if project
@@ -95,7 +94,7 @@ start the server."
 ;;;###autoload
 (defun cider (host port)
   "Connect to an nREPL server identified by HOST and PORT."
-  (interactive (list (read-string "Host: " nrepl-host nil nrepl-host)
+  (interactive (list (read-string "Host: " (nrepl-current-host) nil (nrepl-current-host))
                      (string-to-number (let ((port (nrepl-default-port)))
                                          (read-string "Port: " port nil port)))))
   (setq cider-current-clojure-buffer (current-buffer))
