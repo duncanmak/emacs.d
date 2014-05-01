@@ -4,9 +4,9 @@
 
 ;; Author: Phil Hagelberg <technomancy@gmail.com>
 ;; URL: http://emacswiki.org/cgi-bin/wiki/ClojureTestMode
-;; Version: 2.1.0
+;; Version: 3.0.0
 ;; Keywords: languages, lisp, test
-;; Package-Requires: ((clojure-mode "1.7") (nrepl "0.1.7"))
+;; Package-Requires: ((clojure-mode "1.7") (cider "0.4.0"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -95,6 +95,11 @@
 ;; 2.0.0 2012-12-29
 ;;  * Replace slime with nrepl.el
 
+;; 3.0.0 2013-12-27
+;;  * Replace nrepl.el with cider
+;;  * Improve clojure-test-maybe-enable heuristic
+;;  * Obsolete clojure-test-jump-to-implementation in favour of other libs
+
 ;;; TODO:
 
 ;; * Prefix arg to jump-to-impl should open in other window
@@ -109,14 +114,8 @@
 (require 'cl)
 (require 'clojure-mode)
 (require 'which-func)
-(require 'nrepl)
-
-(declare-function nrepl-repl-buffer            "nrepl.el")
-(declare-function nrepl-make-response-handler  "nrepl.el")
-(declare-function nrepl-send-string            "nrepl.el")
-(declare-function nrepl-current-ns             "nrepl.el")
-(declare-function nrepl-current-tooling-session "nrepl.el")
-(declare-function nrepl-current-connection-buffer "nrepl.el")
+(require 'nrepl-client)
+(require 'cider-interaction)
 
 ;; Faces
 
@@ -160,9 +159,6 @@
 
 ;; Support Functions
 
-(defun clojure-test-nrepl-connected-p ()
-  (nrepl-current-connection-buffer))
-
 (defun clojure-test-make-handler (callback)
   (lexical-let ((buffer (current-buffer))
                 (callback callback))
@@ -170,20 +166,20 @@
                                  (lambda (buffer value)
                                    (funcall callback buffer value))
                                  (lambda (buffer value)
-                                   (nrepl-emit-interactive-output value))
+                                   (cider-repl-emit-interactive-output value))
                                  (lambda (buffer err)
-                                   (nrepl-emit-interactive-output err))
+                                   (cider-repl-emit-interactive-output err))
                                  '())))
 
 (defun clojure-test-eval (string &optional handler)
   (nrepl-send-string string
                      (clojure-test-make-handler (or handler #'identity))
-                     (or (nrepl-current-ns) "user")
+                     (or (cider-current-ns) "user")
                      (nrepl-current-tooling-session)))
 
 (defun clojure-test-load-reporting ()
   "Redefine the test-is report function to store results in metadata."
-  (when (clojure-test-nrepl-connected-p)
+  (when (cider-connected-p)
     (nrepl-send-string-sync
      "(ns clojure.test.mode
         (:use [clojure.test :only [file-position *testing-vars* *test-out*
@@ -239,7 +235,7 @@
             (clojure-test-mode-test-one-var ns test-name))
           (do-report {:type :end-test-ns, :ns ns-obj}))
         (do-report (assoc @*report-counters* :type :summary))))"
-     (or (nrepl-current-ns) "user")
+     (or (cider-current-ns) "user")
      (nrepl-current-tooling-session))))
 
 (defun clojure-test-get-results (buffer result)
@@ -295,6 +291,7 @@
         (overlay-put overlay 'face (if (equal event :fail)
                                        'clojure-test-failure-face
                                      'clojure-test-error-face))
+        (overlay-put overlay 'help-echo message)
         (overlay-put overlay 'message message)
         (overlay-put overlay 'actual pp-actual)))))
 
@@ -352,7 +349,7 @@ Clojure src file for the given test namespace.")
   (save-some-buffers nil (lambda () (equal major-mode 'clojure-mode)))
   (message "Testing...")
   (if (not (clojure-in-tests-p))
-      (nrepl-load-file (buffer-file-name)))
+      (cider-load-file (buffer-file-name)))
   (save-window-excursion
     (if (not (clojure-in-tests-p))
         (clojure-jump-to-test))
@@ -460,7 +457,7 @@ Clojure src file for the given test namespace.")
                          (clojure-find-ns))))
     (nrepl-send-string-sync command)))
 
-(defun clojure-test-clear (&optional callback)
+(defun clojure-test-clear ()
   "Remove overlays and clear stored results."
   (interactive)
   (remove-overlays)
@@ -493,7 +490,10 @@ Clojure src file for the given test namespace.")
   "Jump from test file to implementation."
   (interactive)
   (find-file (funcall clojure-test-implementation-for-fn
-                      (clojure-find-package))))
+                      (clojure-find-ns))))
+
+(make-obsolete 'clojure-test-jump-to-implementation
+               "use projectile or toggle.el instead." "3.0.0")
 
 (defvar clojure-test-mode-map
   (let ((map (make-sparse-keymap)))
@@ -516,20 +516,31 @@ Clojure src file for the given test namespace.")
 
 \\{clojure-test-mode-map}"
   nil " Test" clojure-test-mode-map
-  (when (clojure-test-nrepl-connected-p)
+  (when (cider-connected-p)
     (clojure-test-load-reporting)))
 
 (add-hook 'nrepl-connected-hook 'clojure-test-load-reporting)
 
+(defconst clojure-test-regex
+  (rx "clojure.test"))
+
+;;;###autoload
+(defun clojure-find-clojure-test ()
+  (let ((regexp clojure-test-regex))
+    (save-restriction
+      (save-excursion
+        (save-match-data
+          (goto-char (point-min))
+          (when (re-search-forward regexp nil t)
+            (match-string-no-properties 0)))))))
+
 ;;;###autoload
 (progn
   (defun clojure-test-maybe-enable ()
-    "Enable clojure-test-mode if the current buffer contains a namespace
-with a \"test.\" bit on it."
-    (let ((ns (clojure-find-package))) ; defined in clojure-mode.el
-      (when (and ns (string-match "test\\(\\.\\|$\\)" ns))
-        (save-window-excursion
-          (clojure-test-mode t)))))
+    "Enable clojure-test-mode if the current buffer contains a \"clojure.test\" bit in it."
+    (when (clojure-find-clojure-test)
+      (save-window-excursion
+        (clojure-test-mode t))))
 
   (add-hook 'clojure-mode-hook 'clojure-test-maybe-enable))
 
