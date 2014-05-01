@@ -3,8 +3,8 @@
 ;;; Code:
 
 
-;;;### (autoloads nil nil ("noflet-pkg.el" "noflet.el") (21085 52760
-;;;;;;  571420 0))
+;;;### (autoloads nil nil ("noflet-pkg.el" "noflet.el") (21345 32528
+;;;;;;  969786 0))
 
 ;;;***
 

@@ -4,7 +4,7 @@
 
 ;; Author: Nic Ferrier <nferrier@ferrier.me.uk>
 ;; Keywords: lisp
-;; Version: 0.0.10
+;; Version: 0.0.11
 ;; Url: https://github.com/nicferrier/emacs-noflet
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -102,7 +102,16 @@ name."
               (progn ,@fsets)
               ,@forms)
          (progn ,@fresets)))))
- 
+
+(defun noflet-indent-func (pos &rest state)
+  "Deliver sensible indenting for flet like functions."
+  ;; (message "pos: %s state: %s" pos state)
+  (save-excursion
+    (goto-char (elt (car state) 1))
+    (+ 2
+       (- (point)
+          (line-beginning-position)))))
+
 (defmacro noflet (bindings &rest body)
   "Make local function BINDINGS allowing access to the original.
 
@@ -129,7 +138,7 @@ If new bindings are introduced the binding is discarded upon
 exit.  Even with new bindings there is still a `this-fn'.  It
 points to `noflet|base' for all new bindings."
   (declare (debug ((&rest (cl-defun)) cl-declarations body))
-           (indent ((&whole 4 &rest (&whole 1 &lambda &body)) &body)))
+           (indent noflet-indent-func))
   (apply 'noflet|expand bindings body))
 
 (defmacro nolexflet (bindings &rest body)
@@ -139,8 +148,43 @@ This only exists as an alias for `cl-flet' because Emacs
 maintainers refuse to add the correct indentation spec to
 `cl-flet'."
   (declare (debug ((&rest (cl-defun)) cl-declarations body))
-           (indent ((&whole 4 &rest (&whole 1 &lambda &body)) &body)))
+           (indent noflet-indent-func))
   `(cl-flet ,bindings ,@body))
+
+
+(defmacro nic-lisp1 (bindings &rest body)
+  "This makes lisp-1 functions.
+
+For example:
+
+ (destructuring-bind (value func)
+    (nic-lisp1 ((a (x)
+                  (* x 7)))
+       (list (a 10) a))
+  (funcall func 6))
+
+the nic-lisp1 form returns the value of (a 10) as well as the
+original function."
+  (declare (debug ((&rest (cl-defun)) cl-declarations body))
+           (indent ((&whole 4 &rest (&whole 1 &lambda &body)) &body)))
+  (let (newenv lambdas)
+    (dolist (binding bindings)
+      (let* ((bind-var (car binding))
+             (ldef `(cl-function (lambda . ,(cdr binding))))
+             (alias-def `(lambda (&rest cl-labels-args)
+                           (cl-list* 'funcall ',bind-var
+                                     cl-labels-args))))
+        (push (cons bind-var alias-def) newenv)
+        (push (cons bind-var (list ldef)) lambdas)))
+    `(let ,lambdas
+       ,@(macroexp-unprogn
+          (macroexpand-all
+           `(progn ,@body)
+           (if (assq 'function newenv)
+               newenv
+               (cons
+                (cons 'function #'cl--labels-convert)
+                newenv)))))))
 
 (provide 'noflet)
 
