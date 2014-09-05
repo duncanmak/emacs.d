@@ -31,3 +31,6 @@
 [submodule "site-lisp/jslint-reporter"]
 	path = site-lisp/jslint-reporter
 	url = git@github.com:FND/jslint-reporter
+[submodule "site-lisp/slime"]
+	path = site-lisp/slime
+	url = git@github.com:slime/slime.git

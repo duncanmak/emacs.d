@@ -265,7 +265,6 @@
 (add-hook 'java-mode-hook 'c-hook)
 
 ;;; typescript
-
 (setenv "NODE_NO_READLINE" "1")
 (setq inferior-js-program-command "node")
 (setq inferior-js-mode-hook
@@ -312,6 +311,44 @@
 ;;               (when (locate-library "slime-js")
 ;;                 (require 'setup-slime-js))))
 
+;;; SLIME
+(require 'slime-autoloads)
+
+;; Set your lisp system and, optionally, some contribs
+(setq slime-lisp-implementations
+      '((kawa
+         ("java"
+          ;; needed jar files
+          "-cp" "/usr/local/Cellar/kawa/1.14/kawa-1.14.jar:/Users/duncan/git/emacs.d/site-lisp/slime/contrib//swank-kawa.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/lib/tools.jar"
+          ;; channel for debugger
+          "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n"
+          ;; depending on JVM, compiler may need more stack
+          "-Xss2M"
+          ;; kawa without GUI
+          "kawa.repl" "-s")
+         :init kawa-slime-init)))
+
+(defun kawa-slime-init (file _)
+  (setq slime-protocol-version 'ignore)
+  (format "%S\n"
+          `(begin (import (swank-kawa))
+                  (start-swank ,file)
+                  ;; Optionally add source paths of your code so
+                  ;; that M-. works better:
+                  ;;(set! swank-java-source-path
+		  ;;  (append
+		  ;;   '(,(expand-file-name "~/lisp/slime/contrib/")
+		  ;;     "/scratch/kawa")
+		  ;;   swank-java-source-path))
+                  )))
+
+;; (slime-setup '(slime-repl slime-c-p-c slime-editing-commands slime-fancy-inspector slime-fancy-trace slime-fuzzy slime-presentations slime-scratch slime-references slime-package-fu slime-fontifying-fu slime-trace-dialog))
+(add-hook 'slime-repl-mode-hook
+          (lambda ()
+            (paredit-mode +1)
+            (define-key slime-repl-mode-map
+              (read-kbd-macro paredit-backward-delete-key) nil)))
+(setq slime-contribs '(slime-repl inferior-slime slime-scratch))
 
 ;;; Python
 
@@ -509,6 +546,7 @@
  '(nxml-child-indent 4)
  '(pivotal-api-token "a6b179a9a3f1615a42752fd18d96fbb6")
  '(puppet-indent-level 4)
+ '(quack-default-program "kawa")
  '(rcirc-buffer-maximum-lines 10000)
  '(ruby-deep-indent-paren nil)
  '(scroll-conservatively 101)
