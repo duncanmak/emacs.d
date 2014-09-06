@@ -264,6 +264,13 @@
 ;;; java
 (add-hook 'java-mode-hook 'c-hook)
 
+(require 'cedet)
+(require 'semantic)
+(load "semantic/loaddefs.el")
+(semantic-mode 1)
+;; (require 'malabar-mode)
+;; (add-to-list 'auto-mode-alist '("\\.java\\'" . malabar-mode))
+
 ;;; typescript
 (setenv "NODE_NO_READLINE" "1")
 (setq inferior-js-program-command "node")
