@@ -5,6 +5,13 @@
 ;;; Code:
 ;;;
 ;; Turn off mouse interface early in startup to avoid momentary display
+
+;; Added by Package.el.  This must come before configurations of
+;; installed packages.  Don't delete this line.  If you don't want it,
+;; just comment it out by adding a semicolon to the start of the line.
+;; You may delete these explanatory comments.
+(package-initialize)
+
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 
 ;; No splash screen please ... jeez
@@ -20,12 +27,12 @@
 (setq auto-revert-verbose nil)
 
 (require 'package)
-;; Add the original Emacs Lisp Package Archive
 (add-to-list 'package-archives
-             '("elpa" . "http://tromey.com/elpa/"))
-;; Add the user-contributed repository
-(add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/"))
+             '("melpa" . "https://melpa.org/packages/"))
+(when (< emacs-major-version 24)
+  ;; For important compatibility libraries like cl-lib
+  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
+(package-initialize) ;; You might already have this line
 
 (server-start)
 (desktop-save-mode 1)
@@ -82,7 +89,7 @@
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 
 ;;; flycheck
-(add-hook 'after-init-hook #'global-flycheck-mode)
+;; (add-hook 'after-init-hook #'global-flycheck-mode)
 
 ;;; company-mode
 (add-hook 'after-init-hook 'global-company-mode)
@@ -250,11 +257,6 @@
 (add-hook 'scheme-mode-hook           'lisp-hook)
 (add-hook 'lisp-mode-hook             'lisp-hook)
 
-;;; nrepl
-(add-hook 'nrepl-mode-hook             'subword-mode)
-(add-hook 'nrepl-mode-hook             'paredit-mode)
-(add-hook 'nrepl-interaction-mode-hook 'nrepl-turn-on-eldoc-mode)
-
 (defun c-hook ()
   (imenu-add-menubar-index)
   (subword-mode +1)
@@ -264,10 +266,10 @@
 ;;; java
 (add-hook 'java-mode-hook 'c-hook)
 
-(require 'cedet)
-(require 'semantic)
-(load "semantic/loaddefs.el")
-(semantic-mode 1)
+;; (require 'cedet)
+;; (require 'semantic)
+;; (load "semantic/loaddefs.el")
+;; (semantic-mode 1)
 ;; (require 'malabar-mode)
 ;; (add-to-list 'auto-mode-alist '("\\.java\\'" . malabar-mode))
 
@@ -319,14 +321,14 @@
 ;;                 (require 'setup-slime-js))))
 
 ;;; SLIME
-(require 'slime-autoloads)
+;; (require 'slime-autoloads)
 
 ;; Set your lisp system and, optionally, some contribs
 (setq slime-lisp-implementations
       '((kawa
          ("java"
           ;; needed jar files
-          "-cp" "/usr/local/Cellar/kawa/1.14/kawa-1.14.jar:/Users/duncan/git/emacs.d/site-lisp/slime/contrib//swank-kawa.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/lib/tools.jar"
+          "-cp" "/Users/duncan/bin/kawa.jar:/Users/duncan/bin/swank-kawa.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/lib/tools.jar"
           ;; channel for debugger
           "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n"
           ;; depending on JVM, compiler may need more stack
@@ -343,19 +345,24 @@
                   ;; Optionally add source paths of your code so
                   ;; that M-. works better:
                   ;;(set! swank-java-source-path
-		  ;;  (append
-		  ;;   '(,(expand-file-name "~/lisp/slime/contrib/")
-		  ;;     "/scratch/kawa")
-		  ;;   swank-java-source-path))
+                  ;;  (append
+                  ;;   '(,(expand-file-name "~/lisp/slime/contrib/")
+                  ;;     "/scratch/kawa")
+                  ;;   swank-java-source-path))
                   )))
 
-;; (slime-setup '(slime-repl slime-c-p-c slime-editing-commands slime-fancy-inspector slime-fancy-trace slime-fuzzy slime-presentations slime-scratch slime-references slime-package-fu slime-fontifying-fu slime-trace-dialog))
+;; Optionally define a command to start it.
+(defun kawa ()
+  (interactive)
+  (slime 'kawa))
+
 (add-hook 'slime-repl-mode-hook
           (lambda ()
             (paredit-mode +1)
             (define-key slime-repl-mode-map
               (read-kbd-macro paredit-backward-delete-key) nil)))
-(setq slime-contribs '(slime-repl inferior-slime slime-scratch))
+;; (setq slime-contribs '(inferior-slime slime-repl slime-banner slime-scratch))
+(setq slime-contribs '(inferior-slime slime-banner slime-repl slime-scratch))
 
 ;;; Python
 
@@ -387,24 +394,11 @@
 ;;; Ruby
 (require 'ruby-mode)
 (defun ruby-hook ()
-  (require 'rinari)
-  (robe-mode)
-  (rinari-launch)
-  (add-to-list 'load-path "ruby-debug-extra/emacs")
-  (require 'rdebug)
   (imenu-add-menubar-index)
   (subword-mode +1)
   (electric-pair-mode -1)
   (electric-indent-mode -1)
-  (require 'rvm)
-  (rvm-use-default)
-  (ad-activate 'run-ruby)
-  (require 'pry)
-  )
-
-(defadvice run-ruby (after rvm-run-ruby-advice)
-  "Activate RVM when run-ruby"
-  (rvm-activate-corresponding-ruby))
+  (require 'pry))
 
 (eval-after-load 'ruby-mode '(add-hook 'ruby-mode-hook 'ruby-hook))
 (add-to-list 'auto-mode-alist '("Gemfile" . ruby-mode))
@@ -420,47 +414,38 @@
 
 
 ;;; Scala
-(setenv "ENSIME_JVM_ARGS" "-Xms128M -Xmx512M -Dfile.encoding=UTF-8")
-(require 'ensime)
-(require 'scala-mode2)
-(defun scala-hook ()
-  (subword-mode +1)
-  (ensime-scala-mode-hook)
-  (electric-pair-mode -1)
-  (electric-indent-mode -1)
-  (setq ensime-sem-high-faces
-        '(
-          (var . (:foreground "#ff2222"))
-          (val . (:foreground "#dddddd"))
-          (varField . (:foreground "#ff3333"))
-          (valField . (:foreground "#dddddd"))
-          (functionCall . (:foreground "#84BEE3"))
-          (param . (:foreground "#ffffff"))
-          (class . font-lock-type-face)
-          (trait . (:foreground "#084EA8"))
-          (object . (:foreground "#026DF7"))
-          (package . font-lock-preprocessor-face)
-          ))
-  )
+;; (setenv "ENSIME_JVM_ARGS" "-Xms128M -Xmx512M -Dfile.encoding=UTF-8")
+;; (require 'ensime)
+;; (require 'scala-mode2)
+;; (defun scala-hook ()
+;;   (subword-mode +1)
+;;   (ensime-scala-mode-hook)
+;;   (electric-pair-mode -1)
+;;   (electric-indent-mode -1)
+;;   (setq ensime-sem-high-faces
+;;         '(
+;;           (var . (:foreground "#ff2222"))
+;;           (val . (:foreground "#dddddd"))
+;;           (varField . (:foreground "#ff3333"))
+;;           (valField . (:foreground "#dddddd"))
+;;           (functionCall . (:foreground "#84BEE3"))
+;;           (param . (:foreground "#ffffff"))
+;;           (class . font-lock-type-face)
+;;           (trait . (:foreground "#084EA8"))
+;;           (object . (:foreground "#026DF7"))
+;;           (package . font-lock-preprocessor-face)
+;;           ))
+;;   )
 
-(add-hook 'scala-mode-hook 'scala-hook)
-
-;;; rcirc
-(load-file (expand-file-name "~/.emacs.d/rcirc-additions.el"))
+;; (add-hook 'scala-mode-hook 'scala-hook)
 
 ;;; golden-ratio
-(require 'golden-ratio)
-(golden-ratio-enable)
+;; (require 'golden-ratio)
+;; (golden-ratio-enable)
 
-;;; gitty
-(load "~/.emacs.d/elpa/gitty-1.0/gitty.el")
-(require 'gitty)
-(gitty-mode)
-
-
-;;; powerline
-(require 'powerline)
-(powerline-center-theme)
+;;; mode line
+(require 'telephone-line)
+(telephone-line-mode 1)
 
 ;;
 ;; Setup for ediff.
@@ -525,7 +510,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ansi-color-names-vector ["#212526" "#ff4b4b" "#b4fa70" "#fce94f" "#729fcf" "#ad7fa8" "#8cc4ff" "#eeeeec"])
+ '(ansi-color-names-vector
+   ["#212526" "#ff4b4b" "#b4fa70" "#fce94f" "#729fcf" "#ad7fa8" "#8cc4ff" "#eeeeec"])
  '(background-color "#042028")
  '(background-mode dark)
  '(blink-cursor-mode nil)
@@ -537,7 +523,9 @@
  '(confirm-kill-emacs (quote y-or-n-p))
  '(cursor-color "#708183")
  '(custom-enabled-themes (quote (wombat)))
- '(custom-safe-themes (quote ("fb4bf07618eab33c89d72ddc238d3c30918a501cf7f086f2edf8f4edba9bd59f" "1e7e097ec8cb1f8c3a912d7e1e0331caeed49fef6cff220be63bd2a6ba4cc365" "30fe7e72186c728bd7c3e1b8d67bc10b846119c45a0f35c972ed427c45bacc19" "fc5fcb6f1f1c1bc01305694c59a1a861b008c534cae8d0e48e4d5e81ad718bc6" "64c1dadc18501f028b1008a03f315f609d7d29a888e08993c192c07b9c4babc2" "21d9280256d9d3cf79cbcf62c3e7f3f243209e6251b215aede5026e0c5ad853f" default)))
+ '(custom-safe-themes
+   (quote
+    ("fb4bf07618eab33c89d72ddc238d3c30918a501cf7f086f2edf8f4edba9bd59f" "1e7e097ec8cb1f8c3a912d7e1e0331caeed49fef6cff220be63bd2a6ba4cc365" "30fe7e72186c728bd7c3e1b8d67bc10b846119c45a0f35c972ed427c45bacc19" "fc5fcb6f1f1c1bc01305694c59a1a861b008c534cae8d0e48e4d5e81ad718bc6" "64c1dadc18501f028b1008a03f315f609d7d29a888e08993c192c07b9c4babc2" "21d9280256d9d3cf79cbcf62c3e7f3f243209e6251b215aede5026e0c5ad853f" default)))
  '(flycheck-highlighting-mode (quote lines))
  '(foreground-color "#708183")
  '(global-undo-tree-mode t)
@@ -550,6 +538,10 @@
  '(js2-cleanup-whitespace t)
  '(js2-mirror-mode t)
  '(nxml-child-indent 4)
+ '(org-trello-current-prefix-keybinding "C-c o")
+ '(package-selected-packages
+   (quote
+    (geiser telephone-line slime hlinum diff-hl hl-sexp scheme-complete Save-visited-files hippie-expand-slime yaml-mode ws-trim wgrep undo-tree tuareg tagedit ssh-config-mode ssh sr-speedbar smartparens rvm ruby-mode ruby-end ruby-compilation robe redo+ quack puppet-mode pastels-on-dark-theme parenface paredit org-trello org nrepl nav multiple-cursors monokai-theme mic-paren markdown-mode malabar-mode magit lusty-explorer less-css-mode kill-ring-search jump js-comint ioccur igrep ibuffer-vc highlight-parentheses gitty gitignore-mode gitconfig-mode gist gdb-shell full-ack flycheck-color-mode-line find-file-in-project find-file-in-git-repo f esxml ensime elnode elein dired-single dired-isearch dired-details dired-details+ dired+ diff-git deft cssh css-mode csharp-mode crontab-mode company-inf-ruby color-theme-solarized color-file-completion coffee-mode closure-template-html-mode clojurescript-mode clojure-test-mode cljdoc browse-kill-ring applescript-mode align-cljlet ac-nrepl)))
  '(pivotal-api-token "a6b179a9a3f1615a42752fd18d96fbb6")
  '(puppet-indent-level 4)
  '(quack-default-program "kawa")
@@ -565,4 +557,5 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(default ((t (:inherit nil :stipple nil :background "#242424" :foreground "#f6f3e8" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 180 :width normal :foundry "nil" :family "Menlo"))))
  '(c-annotation-face ((t (:foreground "gray")))))
